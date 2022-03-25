@@ -1,0 +1,30 @@
+name: mirror
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: checkout upstream
+      uses: actions/checkout@v3
+      with:
+        repository: jeremy-rifkin/Wheatly
+        token: ${{secrets.CHECKOUT_TOKEN}}
+        path: upstream
+    - name: copy files
+      run: |
+           mv -v upstream/* .
+           rm -rfv upstream
+           ls
+    - name: cleanse sensitive files
+      run: python3 mirror_tools/cleanse.py
+    - name: commit
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "[Workflow] Changes from upstream"
