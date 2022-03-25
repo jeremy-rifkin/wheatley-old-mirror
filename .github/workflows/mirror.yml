@@ -19,6 +19,7 @@ jobs:
         path: upstream
     - name: copy files
       run: |
+           rm -rf src
            mv -v upstream/* .
            rm -rfv upstream
            ls
