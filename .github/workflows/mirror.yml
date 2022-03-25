@@ -14,7 +14,7 @@ jobs:
     - name: checkout upstream
       uses: actions/checkout@v3
       with:
-        repository: jeremy-rifkin/Wheatly
+        repository: jeremy-rifkin/wheatly
         token: ${{secrets.CHECKOUT_TOKEN}}
         path: upstream
     - name: copy files
