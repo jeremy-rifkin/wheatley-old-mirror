@@ -12,13 +12,13 @@ function on_message(message: Discord.Message) {
     if(message.content == "!wtest") {
         assert(message.member != null);
         if(is_authorized_admin(message.member)) {
-            message.reply(`test`);
+            message.reply("test");
             const embed = new Discord.MessageEmbed()
-                         .setColor(color)
-                         .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL())
-                         .setDescription(`test test`)
-                         .setFooter(`ID: ${message.author.id}`)
-                         .setTimestamp();
+                .setColor(color)
+                .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL())
+                .setDescription("test test")
+                .setFooter(`ID: ${message.author.id}`)
+                .setTimestamp();
             message.channel.send({ embeds: [embed] });
         }
     }
