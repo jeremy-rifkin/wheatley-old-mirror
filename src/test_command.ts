@@ -15,7 +15,8 @@ function on_message(message: Discord.Message) {
             message.reply("test");
             const embed = new Discord.MessageEmbed()
                 .setColor(color)
-                .setAuthor(`${message.author.username}#${message.author.discriminator}`, message.author.displayAvatarURL())
+                .setAuthor(`${message.author.username}#${message.author.discriminator}`,
+                           message.author.displayAvatarURL())
                 .setDescription("test test")
                 .setFooter(`ID: ${message.author.id}`)
                 .setTimestamp();
