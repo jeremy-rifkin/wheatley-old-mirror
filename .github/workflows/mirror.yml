@@ -21,7 +21,7 @@ jobs:
     - name: copy files
       run: |
            rm -rf src
-           mv -v upstream/* .
+           mv -v upstream/* upstream/.eslintrc.yml upstream/.gitignore .
            rm -rfv upstream
            ls
     - name: cleanse sensitive files
