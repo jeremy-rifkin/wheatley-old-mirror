@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  mirror:
+  run-eslint:
     runs-on: ubuntu-20.04
     steps:
     - name: checkout
