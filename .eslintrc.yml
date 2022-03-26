@@ -1,0 +1,53 @@
+env:
+  browser: true
+  es2021: true
+extends:
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
+parser: '@typescript-eslint/parser'
+parserOptions:
+  ecmaVersion: latest
+  sourceType: module
+plugins:
+  - '@typescript-eslint'
+rules:
+  indent:
+    - error
+    - 4
+    - FunctionDeclaration:
+        parameters:
+          first
+      CallExpression:
+        arguments:
+          first
+      MemberExpression:
+        1
+      SwitchCase:
+        1
+      ImportDeclaration:
+        first
+  max-len:
+    - error
+    - 120
+  semi:
+    - error
+    - always
+  quotes:
+    - error
+    - double
+  no-unused-vars:
+    - warn
+    - destructuredArrayIgnorePattern:
+        ^_
+      argsIgnorePattern:
+        ^_
+      varsIgnorePattern:
+        assert|M
+  no-constant-condition:
+    - off
+  "@typescript-eslint/no-unused-vars":
+    - off
+  "@typescript-eslint/no-non-null-assertion":
+    - off
+  "@typescript-eslint/no-explicit-any":
+    - off
