@@ -24,7 +24,7 @@ def main():
 	for file in [
 		"anti_raid.ts",
 		"anti_scambot.ts",
-		"***REMOVED***.ts",
+		"hic_sunt_dracones.ts",
 		"link_blacklist.ts",
 		"raidpurge.ts"
 	]:
