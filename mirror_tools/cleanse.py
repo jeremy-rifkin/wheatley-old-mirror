@@ -26,7 +26,8 @@ def main():
 		"anti_scambot.ts",
 		"hic_sunt_dracones.ts",
 		"link_blacklist.ts",
-		"raidpurge.ts"
+		"raidpurge.ts",
+		"config.ts"
 	]:
 		cleanse(f"src/{file}")
 
