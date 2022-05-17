@@ -12,5 +12,5 @@ function on_interaction_create(interaction: Discord.Interaction) {
 
 export async function setup_pasta(_client: Discord.Client) {
     client = _client;
-    client.on('interactionCreate', on_interaction_create);
+    client.on("interactionCreate", on_interaction_create);
 }
