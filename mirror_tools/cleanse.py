@@ -10,25 +10,28 @@ redacted_message = \
 """.strip().split("\n") + [""]
 
 def emplace_over(a, b):
-	return a + b[len(a):]
+    return a + b[len(a):]
 
 def cleanse(path):
-	with open(path, "r") as f:
-		lines = ["/**/" for _ in f]
-	lines = emplace_over(redacted_message, lines)
-	with open(path, "w") as f:
-		f.write("\n".join(lines) + "\n")
-	print(f"cleansed {path}")
+    with open(path, "r") as f:
+        lines = ["/**/" for _ in f]
+    lines = emplace_over(redacted_message, lines)
+    with open(path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+    print(f"cleansed {path}")
 
 def main():
-	for file in [
-		"anti_raid.ts",
-		"anti_scambot.ts",
-		"hic_sunt_dracones.ts",
-		"link_blacklist.ts",
-		"raidpurge.ts",
-		"config.ts"
-	]:
-		cleanse(f"src/{file}")
+    for file in [
+        "anti_raid.ts",
+        "anti_scambot.ts",
+        "config.ts",
+        "hic_sunt_dracones.ts",
+        "link_blacklist.ts",
+        "message_purge.ts"
+        "pasta.ts"
+        "raidpurge.ts",
+        "test_module.ts",
+    ]:
+        cleanse(f"src/{file}")
 
 main()
