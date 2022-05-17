@@ -1,3 +1,5 @@
+import os
+
 redacted_message = \
 """
 /****************************************************
@@ -13,12 +15,15 @@ def emplace_over(a, b):
     return a + b[len(a):]
 
 def cleanse(path):
-    with open(path, "r") as f:
-        lines = ["/**/" for _ in f]
-    lines = emplace_over(redacted_message, lines)
-    with open(path, "w") as f:
-        f.write("\n".join(lines) + "\n")
-    print(f"cleansed {path}")
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            lines = ["/**/" for _ in f]
+        lines = emplace_over(redacted_message, lines)
+        with open(path, "w") as f:
+            f.write("\n".join(lines) + "\n")
+        print(f"cleansed {path}")
+    else:
+        print(f"Couldn't find {path}")
 
 def main():
     for file in [
@@ -28,7 +33,7 @@ def main():
         "hic_sunt_dracones.ts",
         "link_blacklist.ts",
         "message_purge.ts"
-        "pasta.ts"
+        "pasta.ts",
         "raidpurge.ts",
         "test_module.ts",
     ]:
