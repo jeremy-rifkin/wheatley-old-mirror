@@ -119,7 +119,8 @@ async function create_modmail_thread(interaction: Discord.ModalSubmitInteraction
         const thread =  await rules_channel.threads.create({
             type: "GUILD_PRIVATE_THREAD",
             invitable: false,
-            name: `Modmail #${id}`
+            name: `Modmail #${id}`,
+            autoArchiveDuration: "MAX"
         });
         // initial message
         await thread.send({
