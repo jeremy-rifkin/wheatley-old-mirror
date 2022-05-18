@@ -7,9 +7,13 @@ export const MINUTE = 1000 * 60;
 
 export const pepereally = "<:pepereally:643881257624666112>";
 
-export const color = 0x337fd5;
-export const alert_color = 0xf5a53e;
-export const speedrun_color = 0x0fc644;
+export enum colors {
+    color = 0x337fd5,
+    alert_color = 0xf5a53e,
+    speedrun_color = 0x0fc644,
+    red = 0x0,
+    green = 0x0
+}
 
 // User IDs
 export const zelis_id = "199943082441965577";
@@ -38,6 +42,13 @@ export const tutoring_id = "922603597294870609";
 export const tutoring_requests_id = "915271477559984160";
 export const rules_channel_id = "659868782877212723";
 export const mods_channel_id = "847993258600038460";
+
+// Thread-based help channels
+
+export const thread_based_help_channel_ids = new Set([
+    "976315803634925578", // cpp-help-threads
+    "976315954965381170", // c-help-threads
+]);
 
 // General config
 

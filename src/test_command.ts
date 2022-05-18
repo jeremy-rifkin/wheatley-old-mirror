@@ -1,7 +1,7 @@
 import * as Discord from "discord.js";
 import { strict as assert } from "assert";
 import { M } from "./utils";
-import { color, is_authorized_admin, TCCPP_ID } from "./common";
+import { colors, is_authorized_admin, TCCPP_ID } from "./common";
 
 let client: Discord.Client;
 
@@ -14,7 +14,7 @@ function on_message(message: Discord.Message) {
         if(is_authorized_admin(message.member)) {
             message.reply("test");
             const embed = new Discord.MessageEmbed()
-                .setColor(color)
+                .setColor(colors.color)
                 .setAuthor(`${message.author.username}#${message.author.discriminator}`,
                            message.author.displayAvatarURL())
                 .setDescription("test test")

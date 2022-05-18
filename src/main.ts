@@ -49,6 +49,8 @@ import { setup_pasta } from "./pasta";
 import { setup_read_tutoring } from "./read_tutoring";
 import { setup_test_module } from "./test_module";
 import { setup_modmail } from "./modmail";
+import { setup_thread_renaming } from "./thread_renaming";
+import { setup_thread_help } from "./thread_help";
 
 // Setup client
 const client = new Discord.Client({
@@ -132,7 +134,9 @@ process.on("unhandledRejection", (reason, promise) => {
         await setup_read_tutoring(client);
         await setup_pasta(client);
         await setup_test_module(client);
-        await setup_modmail(client);
+        await setup_modmail(client, database);
+        await setup_thread_renaming(client);
+        await setup_thread_help(client);
 
         const token = readFileSync("auth.key", { encoding: "utf-8" });
 
