@@ -4,7 +4,6 @@ import { M } from "./utils";
 
 // Common constants
 export const MINUTE = 1000 * 60;
-export const MINUTE = 1000 * 60;
 
 export const pepereally = "<:pepereally:643881257624666112>";
 
@@ -49,15 +48,23 @@ export const mods_channel_id = "847993258600038460";
 export const thread_based_help_channel_ids = new Set([
     "976315803634925578", // cpp-help-threads
     "976315954965381170", // c-help-threads
-    "873682069325217802", // today-i-learned
 ]);
 
 export const thread_based_channel_ids = new Set([
     "802541516655951892", // server-suggestions
     "594212045621035030", // showcase
+    "873682069325217802", // today-i-learned
 ]);
 
 // General config
+
+export const skill_role_ids = new Set([
+    "331719591405551616", // expert
+    "331719590990184450", // advanced
+    "849399021838925834", // proficient
+    "331876085820030978", // intermediate
+    "784733371275673600"  // beginner
+]);
 
 export const authorized_admin_roles = [
     moderators_role_id,
