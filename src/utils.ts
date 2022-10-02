@@ -111,14 +111,16 @@ export function exists_sync(path: string) {
     return exists;
 }
 
-type PotentiallyPartial = Discord.AllowedPartial | Discord.Partialize<Discord.AllowedPartial>;
-
-// TODO: Fix types
-export async function departialize<T extends PotentiallyPartial>(thing: T): Promise<any> {
+type PotentiallyPartial = Discord.User | Discord.PartialUser
+                        | Discord.GuildMember | Discord.PartialGuildMember
+                        | Discord.Message | Discord.PartialMessage
+                        | Discord.MessageReaction | Discord.PartialMessageReaction;
+export async function departialize<T extends PotentiallyPartial,
+                                   R extends ReturnType<T["fetch"]>>(thing: T): Promise<R> {
     if(thing.partial) {
-        return (thing as any).fetch();
+        return await thing.fetch() as R;
     } else {
-        return thing;
+        return thing as any as R;
     }
 }
 
@@ -257,7 +259,7 @@ export class KeyedMutexSet<T> {
 }
 
 let client: Discord.Client;
-let zelis : Discord.User;
+let zelis : Discord.User | undefined | null;
 let has_tried_fetch_zelis = false;
 
 async function get_zelis() {
@@ -265,7 +267,7 @@ async function get_zelis() {
         zelis = await client.users.fetch(zelis_id);
         has_tried_fetch_zelis = true;
     }
-    return zelis != undefined && zelis != null;
+    return zelis !== undefined && zelis !== null;
 }
 
 export function init_debugger(_client: Discord.Client) {
@@ -286,7 +288,7 @@ export async function critical_error(...args: any[]) {
                     } catch { void(0); }
                 }
             }
-            zelis.send(`Critical error occurred: ${strs.join(" ")}`);
+            zelis!.send(`Critical error occurred: ${strs.join(" ")}`);
         }
     } catch { void(0); }
 }
@@ -299,4 +301,18 @@ export function denullify<T>(x: T | null): T {
 export function textchannelify(x: Discord.Channel): Discord.TextBasedChannel {
     assert(x.isTextBased());
     return x;
+}
+
+export async function fetch_text_channel(id: string) {
+    // TODO: Using the client from init_debugger is very ugly.
+    const channel = await client.channels.fetch(id);
+    assert(channel && channel instanceof Discord.TextChannel);
+    return channel;
+}
+
+export async function fetch_thread_channel(channel: Discord.TextChannel, id: string) {
+    // TODO: Using the client from init_debugger is very ugly.
+    const thread = await channel.threads.fetch(id);
+    assert(thread && thread instanceof Discord.ThreadChannel);
+    return thread;
 }
