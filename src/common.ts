@@ -50,11 +50,6 @@ export const introductions_channel_id = "933113495304679494";
 
 // Thread-based help channels
 
-export const thread_based_help_channel_ids = new Set([
-    "976315803634925578", // cpp-help-threads
-    "976315954965381170", // c-help-threads
-]);
-
 export const thread_based_channel_ids = new Set([
     "802541516655951892", // server-suggestions
     "594212045621035030", // showcase
@@ -130,20 +125,10 @@ export function is_authorized_admin(member: Discord.GuildMember | Discord.User |
     }
 }
 
-// TODO: This is temporary until discordjs supports forums
-export const forum_channels = new Set([
-    "1013107104678162544", // cpp-help
-    "1013104018739974194", // c-help
-    "1014328785685979136", // projects
-]);
-export const forum_help_channels = new Set([
-    "1013107104678162544", // cpp-help
-    "1013104018739974194", // c-help
-]);
+export const cpp_help_id = "1013107104678162544";
+export const c_help_id = "1013104018739974194";
 
-export function is_forum_thread(thread: Discord.ThreadChannel) {
-    return thread.parentId && forum_channels.has(thread.parentId);
-}
+export const forum_help_channels = new Set([cpp_help_id, c_help_id]);
 
 export function is_forum_help_thread(thread: Discord.ThreadChannel) {
     return thread.parentId && forum_help_channels.has(thread.parentId);
