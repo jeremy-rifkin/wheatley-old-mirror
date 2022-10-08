@@ -1,6 +1,7 @@
 import * as Discord from "discord.js";
 import { strict as assert } from "assert";
-import { critical_error, denullify, fetch_forum_channel, get_tag, M } from "../utils";
+import { critical_error, fetch_all_threads_archive_count, fetch_forum_channel, get_tag, M,
+         SelfClearingSet } from "../utils";
 import { colors, cpp_help_id, c_help_id, forum_help_channels, is_forum_help_thread, MINUTE,
          wheatley_id } from "../common";
 import { decode_snowflake } from "./snowflake"; // todo: eliminate decode_snowflake
@@ -10,11 +11,34 @@ let client: Discord.Client;
 let cpp_help: Discord.ForumChannel;
 let c_help: Discord.ForumChannel;
 
+const solved_archive_timeout = 12 * 60 * MINUTE; // 12 hours for a solved thread that's reopened
+const inactive_timeout = 12 * 60 * MINUTE; // 12 hours for a thread that's seen no activity, archive
+const resolution_timeout = 12 * 60 * MINUTE; // after another 12 hours, open -> solved
+
+const cleanup_limit = 200; // how many messages back in the archive to go
+
+// if a channel hasn't had activity in 2 hours prompt to ask a better question ?
+const message_inactivity_threshold = 2 * 60 * MINUTE;
+// if the op says thank you remind them to close the thread after 15 minutes
+const thank_you_timeout = 5 * MINUTE;
+
+const thank_you_re = /\b(thanks|thank\s*you|ty|cheers|figured? it out(?!\?))\b/gi;
+
+
 /*
  * Forum thread handling:
  * - Thread create message
  * - Forum cleanup
+ * - Tag cleanup
+ * - Has your question been solved prompt
  */
+
+// TODO: Improve initial message, make it more friendly to the eye
+// reduce time of initial message
+
+// don't prompt twice within 2 hours - that's just annoying
+const possibly_resolved = new SelfClearingSet<string>(2 * 60 * MINUTE);
+const timeout_map = new Map<string, NodeJS.Timeout>();
 
 function create_embed(title: string | undefined, color: number, msg: string) {
     const embed = new Discord.EmbedBuilder()
@@ -26,10 +50,61 @@ function create_embed(title: string | undefined, color: number, msg: string) {
     return embed;
 }
 
+async function prompt_close(thread: Discord.ThreadChannel) {
+    timeout_map.delete(thread.id);
+    const forum = thread.parent;
+    assert(forum instanceof Discord.ForumChannel);
+    const solved_tag = get_tag(forum, "Solved").id;
+    if(thread.appliedTags.includes(solved_tag)) {
+        // no action needed - has been marked !solved
+    } else {
+        M.debug("Sending !solved prompt timeout for thread", [thread.id, thread.name]);
+        thread.send(`<@${thread.ownerId}> Has your question been resolved? If so, run \`!solved\` :)`);
+    }
+}
+
 async function on_message(message: Discord.Message) {
     try {
         if(message.author.bot) return; // Ignore bots
         if(message.type == Discord.MessageType.ThreadCreated) return; // ignore message create messages
+        if(message.id == message.channelId) return; // forum start message
+        const channel = message.channel;
+        if(channel instanceof Discord.ThreadChannel) {
+            const thread = channel;
+            if(is_forum_help_thread(thread)) {
+                const forum = thread.parent;
+                assert(forum instanceof Discord.ForumChannel);
+                const solved_tag = get_tag(forum, "Solved").id;
+                if(!thread.appliedTags.includes(solved_tag)) {
+                    // if this is an unsolved help forum post... check if we need to start or restart a timeout
+                    const op = thread.ownerId;
+                    assert(op, "Assumption: Can only happen if uncached.");
+                    if(message.author.id == op) {
+                        const content = message.content.toLowerCase();
+                        if(content.match(thank_you_re) != null) {
+                            if(!possibly_resolved.has(thread.id)) {
+                                M.debug("Setting !solved prompt timeout for thread", [thread.id, thread.name],
+                                        "based off of", [content]);
+                                timeout_map.set(thread.id, setTimeout(async () => {
+                                    await prompt_close(thread);
+                                }, thank_you_timeout));
+                                possibly_resolved.insert(thread.id);
+                                return;
+                            }
+                        }
+                    }
+                    // if we reach here, it's a non-thank message
+                    // might need to restart the timeout
+                    if(timeout_map.has(thread.id)) {
+                        M.debug("Restarting !solved prompt timeout for thread", [thread.id, thread.name]);
+                        clearTimeout(timeout_map.get(thread.id));
+                        setTimeout(async () => {
+                            await prompt_close(thread);
+                        }, thank_you_timeout);
+                    }
+                }
+            }
+        }
     } catch(e) {
         critical_error(e);
     }
@@ -46,11 +121,11 @@ async function on_thread_create(thread: Discord.ThreadChannel) {
         // TODO: revisit once api kinks are worked out
         const forum = thread.parent;
         assert(forum instanceof Discord.ForumChannel);
-        const open_tag = get_tag(forum, "Open");
-        await thread.setAppliedTags(thread.appliedTags.concat(open_tag.id));
+        const open_tag = get_tag(forum, "Open").id;
+        await thread.setAppliedTags([open_tag].concat(thread.appliedTags));
         setTimeout(async () => {
             await thread.send({
-                embeds: [create_embed(undefined, colors.red, "When your question is answered use `!solved` to mark "
+                embeds: [create_embed(undefined, colors.red, "When your question is answered use **`!solved`** to mark "
                     + "the question as resolved.\n\nRemember to ask specific questions, provide necessary details, and "
                     + "reduce your question to its simplest form. For more information use `!howto ask`.")]
             });
@@ -58,123 +133,83 @@ async function on_thread_create(thread: Discord.ThreadChannel) {
     }
 }
 
-// cleanup my mistake during development....
-async function last_message_is_shit(thread: Discord.ThreadChannel, last: string) {
-    return false;
-    const msg = await thread.messages.fetch(last);
-    if(msg.author.id == wheatley_id) {
-        return true;
+async function check_thread_activity(thread: Discord.ThreadChannel, open_tag: string, solved_tag: string) {
+    assert(thread.lastMessageId);
+    const now = Date.now();
+    const last_message = decode_snowflake(thread.lastMessageId);
+    if(thread.appliedTags.includes(solved_tag) && !thread.archived && now - last_message >= solved_archive_timeout) {
+        M.log("Archiving solved channel", [thread.id, thread.name]);
+        thread.setArchived(true);
+    } else if(!thread.appliedTags.includes(solved_tag) && !thread.archived && now - last_message >= inactive_timeout) {
+        M.log("Archiving inactive channel", [thread.id, thread.name]);
+        assert(thread.ownerId);
+        assert(thread.messageCount);
+        await thread.send({
+            content: `<@${thread.ownerId}>`,
+            embeds: [
+                create_embed(undefined, colors.color, "This question thread is being automatically closed."
+                    + " If your question is not answered feel free to bump the post or re-ask. Take a look"
+                    + " at `!howto ask` for tips on improving your question.")
+            ]
+        });
+        await thread.setArchived(true);
+    } else if(!thread.appliedTags.includes(solved_tag) && thread.archived && now - last_message >= resolution_timeout) {
+        M.log("Resolving channel", [thread.id, thread.name]);
+        await thread.setArchived(false);
+        assert(thread.messageCount);
+        await thread.send({
+            content: `<@${thread.ownerId}>`,
+            embeds: [
+                create_embed(undefined, colors.color, "This question thread is being automatically marked as solved.")
+            ]
+        });
+        await thread.setAppliedTags([solved_tag].concat(thread.appliedTags.filter(t => t != open_tag)));
+        await thread.setArchived(true);
     }
-    return false;
+}
+
+async function misc_checks(thread: Discord.ThreadChannel, open_tag: string, solved_tag: string) {
+    // - Ensure there is exactly one solved/open tag
+    const solved_open_count = thread.appliedTags.filter(tag => [solved_tag, open_tag].includes(tag)).length;
+    if(solved_open_count != 1) {
+        M.debug("Setting thread with", solved_open_count, "solved/open tags to have one such tag",
+                [thread.id, thread.name]);
+        const {archived} = thread;
+        if(archived) await thread.setArchived(false);
+        const tag = thread.appliedTags.includes(solved_tag) ? solved_tag : open_tag;
+        await thread.setAppliedTags(
+            [tag].concat(thread.appliedTags.filter(tag => ![solved_tag, open_tag].includes(tag)))
+        );
+        if(archived) await thread.setArchived(true);
+    }
+    // - Ensure the solved/open tag is at the beginning
+    // We know thread.appliedTags.length >= 1 by now
+    else if(!(thread.appliedTags[0] == solved_tag || thread.appliedTags[0] == open_tag)) {
+        M.debug("Moving solved/open tag to the beginning", [thread.id, thread.name]);
+        const {archived} = thread;
+        if(archived) await thread.setArchived(false);
+        if(archived) await thread.setArchived(false);
+        await thread.setAppliedTags(
+            [solved_tag].concat(thread.appliedTags.filter(tag => ![solved_tag, open_tag].includes(tag)))
+        );
+        if(archived) await thread.setArchived(true);
+    }
 }
 
 async function forum_cleanup() {
     M.info("Running forum cleanup");
-    const now = Date.now();
-    // [Migration]-------------------------------------------
-    // Cleanup shit from before the forum api was solidified:
-    //  Remove [SOLVED] from names and just mark old threads as solved
-    for(const forum of [cpp_help, c_help]) {
-        const solved_tag = get_tag(forum, "Solved");
-        const open_tag = get_tag(forum, "Open");
-        const all_threads: Discord.ThreadChannel[] = [];
-        while(true) {
-            const {threads, hasMore} = await forum.threads.fetchActive();
-            M.debug("Cleanup: a", threads.size);
-            all_threads.push(...threads.map(t => t));
-            assert(!hasMore); // todo: temporary
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if(!hasMore) {
-                break;
-            }
-        }
-        let earliest = new Date(86400000000000); // year 4707
-        while(true) {
-            const {threads, hasMore} = await forum.threads.fetchArchived({ before: earliest });
-            M.debug("Cleanup: b", threads.size, earliest);
-            all_threads.push(...threads.map(t => t));
-            M.debug(threads.map(t => t.createdTimestamp));
-            earliest = new Date(Math.min(earliest.getTime(), ...threads.map(t => denullify(t.createdAt).getTime())));
-            //M.debug("Cleanup: xxx", threads.map(t => t.name))
-            if(!hasMore) {
-                break;
-            }
-        }
-        M.info(`Cleanup: Found ${all_threads.length} threads`);
-        for(const thread of all_threads) {
-            if(thread.name.startsWith("[SOLVED]")) {
-                M.debug("Cleanup: [SOLVED] -> Solved tag", thread.name);
-                // for some reason thread need to be not archived
-                await thread.setArchived(false);
-                await thread.setName(thread.name.substring("[SOLVED]".length).trim());
-                await thread.setAppliedTags(thread.appliedTags.filter(tag => tag != open_tag.id).concat(solved_tag.id));
-                await thread.setArchived(true);
-            } else {
-                if(!thread.appliedTags.some(tag => [solved_tag.id, open_tag.id].indexOf(tag) != -1)) { // no tags
-                    assert(thread.createdTimestamp);
-                    if(now - thread.createdTimestamp <= 60 * MINUTE * 24 * 7) {
-                        // default to open
-                        M.debug("Cleanup: Adding open tag to recent thread", thread.name);
-                        await thread.setArchived(false);
-                        await thread.setAppliedTags(thread.appliedTags.concat(open_tag.id));
-                        await thread.setArchived(true);
-                    } else {
-                        // just mark old questions as solved
-                        M.debug("Cleanup: Adding solved tag to very old thread", thread.name);
-                        await thread.setArchived(false);
-                        await thread.setAppliedTags(thread.appliedTags.concat(solved_tag.id));
-                        await thread.setArchived(true);
-                    }
-                }
-            }
-        }
-    }
-    // ------------------------------------------------------
-
     // Routinely archive threads
-    // Ensure no thread has both the solved and open tag
+    // Ensure no thread has both the solved and open tag?
     for(const forum of [cpp_help, c_help]) {
-        const active_threads: Discord.ThreadChannel[] = [];
-        while(true) {
-            const {threads, hasMore} = await forum.threads.fetchActive();
-            if(!hasMore) {
-                break;
-            }
-            active_threads.push(...threads.map(t => t));
-        }
-        const solved_archive_timeout = 24 * 60 * MINUTE; // 24 hours for a solved thread that's reopened
-        const inactive_timeout = 48 * 60 * MINUTE; // 48 hours for a channel that's just seen no activity
-
-        active_threads.map(async thread => {
+        const open_tag = get_tag(forum, "Open").id;
+        const solved_tag = get_tag(forum, "Solved").id;
+        for(const [_, thread] of await fetch_all_threads_archive_count(forum, cleanup_limit)) {
             assert(thread.parentId);
-            if(forum_help_channels.has(thread.parentId)) { // TODO
-                //M.debug(thread);
-                assert(thread.createdTimestamp);
-                assert(thread.lastMessageId);
-                if(thread.name.startsWith("[SOLVED]")
-                && now - thread.createdTimestamp >= solved_archive_timeout
-                && now - decode_snowflake(thread.lastMessageId) >= solved_archive_timeout) {
-                    M.log("Archiving solved channel", [thread.id, thread.name]);
-                    thread.setArchived(true);
-                } else if((
-                    now - thread.createdTimestamp >= inactive_timeout
-                        && now - decode_snowflake(thread.lastMessageId) >= inactive_timeout
-                ) || await last_message_is_shit(thread, thread.lastMessageId)) {
-                    M.log("Archiving inactive channel", [thread.id, thread.name]);
-                    assert(thread.ownerId);
-                    assert(thread.messageCount);
-                    await thread.send({
-                        content: thread.messageCount > 1 ? undefined : `<@${thread.ownerId}>`,
-                        embeds: [
-                            create_embed(undefined, colors.color, "This question thread is being automatically closed."
-                                + " If your question is not answered feel free to bump the post or re-ask. Take a look"
-                                + " at `!howto ask` for tips on improving your question.")
-                        ]
-                    });
-                    await thread.setArchived(true);
-                }
+            if(forum_help_channels.has(thread.parentId)) {
+                await misc_checks(thread, open_tag, solved_tag);
+                await check_thread_activity(thread, open_tag, solved_tag);
             }
-        });
+        }
     }
 }
 
@@ -184,7 +219,8 @@ async function on_ready() {
         c_help = await fetch_forum_channel(c_help_id);
         client.on("messageCreate", on_message);
         client.on("threadCreate", on_thread_create);
-        forum_cleanup();
+        //await get_initial_active();
+        await forum_cleanup();
         // every hour try to cleanup
         setInterval(forum_cleanup, 60 * MINUTE);
     } catch(e) {
