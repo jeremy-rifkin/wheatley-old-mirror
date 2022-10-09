@@ -1,7 +1,7 @@
 import * as Discord from "discord.js";
 import { strict as assert } from "assert";
 import { critical_error, fetch_all_threads_archive_count, fetch_forum_channel, get_tag, M,
-         SelfClearingSet } from "../utils";
+         SelfClearingSet } from "../utility/utils";
 import { colors, cpp_help_id, c_help_id, forum_help_channels, is_forum_help_thread, MINUTE,
          wheatley_id } from "../common";
 import { decode_snowflake } from "./snowflake"; // todo: eliminate decode_snowflake
@@ -98,9 +98,9 @@ async function on_message(message: Discord.Message) {
                     if(timeout_map.has(thread.id)) {
                         M.debug("Restarting !solved prompt timeout for thread", [thread.id, thread.name]);
                         clearTimeout(timeout_map.get(thread.id));
-                        setTimeout(async () => {
+                        timeout_map.set(thread.id, setTimeout(async () => {
                             await prompt_close(thread);
-                        }, thank_you_timeout);
+                        }, thank_you_timeout));
                     }
                 }
             }

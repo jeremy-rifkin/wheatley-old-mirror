@@ -2,9 +2,9 @@ import * as Discord from "discord.js";
 import * as moment from "moment";
 import * as chalk from "chalk";
 import * as fs from "fs";
-import { MINUTE, zelis_id } from "./common";
+import { MINUTE, zelis_id } from "../common";
 import { strict as assert } from "assert";
-import { decode_snowflake } from "./components/snowflake";
+import { decode_snowflake } from "../components/snowflake";
 
 function get_caller_location() { // https://stackoverflow.com/a/53339452/15675011
     const e = new Error();
@@ -342,13 +342,13 @@ export async function fetch_inactive_threads_time_limit(forum: Discord.ForumChan
     const now = Date.now();
     const thread_entries: [string, Discord.ThreadChannel][] = [];
     while(true) {
-        const {threads, hasMore} = await forum.threads.fetchArchived({ before /*, limit: 2*/ });
-        //M.debug("xx", threads.map(t => [t.id, t.name]), hasMore);
+        const {threads, hasMore} = await forum.threads.fetchArchived({ before });
         thread_entries.push(...threads);
-        const last: Discord.ThreadChannel = threads.at(-1)!;
+        // The type annotation is needed because of a typescript bug
+        // https://github.com/microsoft/TypeScript/issues/51115
+        const last: Discord.ThreadChannel = threads.last()!;
         before = last.id;
         if(!hasMore || (soft_limit && Math.abs(now - denullify(last.createdAt).getTime()) >= soft_limit)) {
-            //M.debug("--breaking--");
             break;
         }
     }
@@ -368,13 +368,13 @@ export async function fetch_inactive_threads_count(forum: Discord.ForumChannel, 
     const thread_entries: [string, Discord.ThreadChannel][] = [];
     while(true) {
         const {threads, hasMore} = await forum.threads.fetchArchived({ before, limit: Math.min(count, 100) });
-        //M.debug("xx", threads.map(t => [t.id, t.name]), hasMore);
         thread_entries.push(...threads);
-        const last: Discord.ThreadChannel = threads.at(-1)!;
+        // The type annotation is needed because of a typescript bug
+        // https://github.com/microsoft/TypeScript/issues/51115
+        const last: Discord.ThreadChannel = threads.last()!;
         before = last.id;
         count -= threads.size;
         if(!hasMore || count <= 0) {
-            //M.debug("--breaking--");
             break;
         }
     }
