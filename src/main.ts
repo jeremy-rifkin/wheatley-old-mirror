@@ -20,7 +20,7 @@ import * as Discord from "discord.js";
 import { readFileSync } from "fs";
 
 import { strict as assert } from "assert";
-import { critical_error, init_debugger, M } from "./utility/utils";
+import { critical_error, init_debugger, M } from "./utils";
 
 import { MemberTracker } from "./infra/member_tracker";
 import { DatabaseInterface } from "./infra/database_interface";
@@ -57,6 +57,9 @@ import { setup_autoreact } from "./components/autoreact";
 import { setup_username_manager } from "./components/username_manager";
 import { setup_forum_control } from "./components/forum_control";
 import { setup_forum_channels } from "./components/forum_channels";
+import { setup_cppref } from "./components/cppref";
+import { setup_man7 } from "./components/man7";
+import { setup_format } from "./components/format";
 
 // Setup client
 const client = new Discord.Client({
@@ -150,6 +153,9 @@ async function main() {
         await setup_forum_channels(client);
         await setup_status(client);
         await setup_username_manager(client);
+        await setup_cppref(client, guild_command_manager);
+        await setup_man7(client, guild_command_manager);
+        await setup_format(client);
 
         const token = readFileSync("auth.key", { encoding: "utf-8" });
 

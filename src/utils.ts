@@ -1,10 +1,13 @@
 import * as Discord from "discord.js";
 import * as moment from "moment";
 import * as chalk from "chalk";
+
 import * as fs from "fs";
-import { MINUTE, zelis_id } from "../common";
+import { execFile, ExecFileOptions } from "child_process";
+
+import { MINUTE, zelis_id } from "./common";
 import { strict as assert } from "assert";
-import { decode_snowflake } from "../components/snowflake";
+import { decode_snowflake } from "./components/snowflake";
 
 function get_caller_location() { // https://stackoverflow.com/a/53339452/15675011
     const e = new Error();
@@ -387,4 +390,30 @@ export async function fetch_all_threads_archive_count(forum: Discord.ForumChanne
         ...await fetch_inactive_threads_count(forum, count)
     ]);
     return threads;
+}
+
+export function format_list(items: string[]) {
+    if(items.length <= 2) {
+        return items.join(" and ");
+    } else {
+        return `${items.slice(0, items.length - 1).join(", ")}, and ${items[items.length - 1]}`;
+    }
+}
+
+export async function async_exec_file(file: string, args?: string[], options?: fs.ObjectEncodingOptions & ExecFileOptions, input?: string) {
+    return new Promise<{stdout: string | Buffer, stderr: string | Buffer}>((resolve, reject) => {
+        const child = execFile(file, args, options, (error, stdout, stderr) => {
+            if(error) {
+                reject(error);
+            } else {
+                resolve({ stdout, stderr });
+            }
+        });
+        if(!child.stdin) {
+            reject("!child.stdin");
+            assert(false);
+        }
+        child.stdin.write(input);
+        child.stdin.end();
+    });
 }

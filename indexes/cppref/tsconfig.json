@@ -6,7 +6,7 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "allowJs": true,
-        "strictPropertyInitialization": false
+        "skipLibCheck": true
     },
-    "exclude": ["node_modules", "indexes/cppref"]
+    "exclude": ["en.cppreference.com", "upload.cppreference.com"]
 }

@@ -1,7 +1,7 @@
 import * as Discord from "discord.js";
 import { strict as assert } from "assert";
 import { critical_error, fetch_all_threads_archive_count, fetch_forum_channel, get_tag, M,
-         SelfClearingSet } from "../utility/utils";
+         SelfClearingSet } from "../utils";
 import { colors, cpp_help_id, c_help_id, forum_help_channels, is_forum_help_thread, MINUTE,
          wheatley_id } from "../common";
 import { decode_snowflake } from "./snowflake"; // todo: eliminate decode_snowflake
@@ -10,6 +10,8 @@ let client: Discord.Client;
 
 let cpp_help: Discord.ForumChannel;
 let c_help: Discord.ForumChannel;
+
+// TODO: Take into account thread's inactivity setting
 
 const solved_archive_timeout = 12 * 60 * MINUTE; // 12 hours for a solved thread that's reopened
 const inactive_timeout = 12 * 60 * MINUTE; // 12 hours for a thread that's seen no activity, archive
@@ -126,8 +128,9 @@ async function on_thread_create(thread: Discord.ThreadChannel) {
         setTimeout(async () => {
             await thread.send({
                 embeds: [create_embed(undefined, colors.red, "When your question is answered use **`!solved`** to mark "
-                    + "the question as resolved.\n\nRemember to ask specific questions, provide necessary details, and "
-                    + "reduce your question to its simplest form. For more information use `!howto ask`.")]
+                    + "the question as resolved.\n\nRemember to ask __specific questions__, provide __necessary "
+                    + "details__, and reduce your question to its __simplest form__. For tips on how to ask a good "
+                    + "question run `!howto ask`.")]
             });
         }, 5 * 1000);
     }
@@ -182,9 +185,10 @@ async function misc_checks(thread: Discord.ThreadChannel, open_tag: string, solv
     else if(!(thread.appliedTags[0] == solved_tag || thread.appliedTags[0] == open_tag)) {
         M.log("Moving solved/open tag to the beginning", [thread.id, thread.name]);
         const {archived} = thread;
+        const tag = thread.appliedTags.includes(solved_tag) ? solved_tag : open_tag;
         if(archived) await thread.setArchived(false);
         await thread.setAppliedTags(
-            [solved_tag].concat(thread.appliedTags.filter(tag => ![solved_tag, open_tag].includes(tag)))
+            [tag].concat(thread.appliedTags.filter(tag => ![solved_tag, open_tag].includes(tag)))
         );
         if(archived) await thread.setArchived(true);
     }
