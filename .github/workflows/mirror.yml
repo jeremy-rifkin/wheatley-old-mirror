@@ -18,7 +18,7 @@ jobs:
         path: upstream
     - name: copy files
       run: |
-           rm -rf src
+           rm -rf src indexes test
            mv -v upstream/* upstream/.eslintrc.yml upstream/.gitignore .
            rm -rfv upstream
            ls
