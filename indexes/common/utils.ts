@@ -9,22 +9,26 @@ type AsyncQueueResult<T> = {
     value: T;
 };
 
-export class AsyncQueue<T> extends EventEmitter implements AsyncIterable<T> {
+export class AsyncQueue<T> implements AsyncIterable<T> {
     data: T[] = [];
     draining = false;
-    constructor() {
-        super();
-    }
+    data_waiters: (() => void)[] = [];
+    constructor() {}
     push(item: T) {
         assert(!this.draining);
         this.data.push(item);
-        this.emit("push");
+        const f = this.data_waiters.shift();
+        if(f) {
+            f();
+        }
     }
     drain() {
         this.draining = true;
-        this.emit("drain");
+        for(const f of this.data_waiters) {
+            f();
+        }
     }
-    async get(): Promise<AsyncQueueResult<T>> {
+    get_core(): AsyncQueueResult<T> {
         if(this.data.length > 0) {
             return {
                 drained: false,
@@ -36,26 +40,19 @@ export class AsyncQueue<T> extends EventEmitter implements AsyncIterable<T> {
                 value: undefined as any
             };
         } else {
-            return new Promise(resolve => {
-                const closure = () => {
-                    this.removeListener("push", closure);
-                    this.removeListener("drain", closure);
-                    if(this.data.length > 0) {
-                        resolve({
-                            drained: false,
-                            value: this.data.shift()!
-                        });
-                    } else {
-                        assert(this.draining);
-                        resolve({
-                            drained: true,
-                            value: undefined as any
-                        });
-                    }
-                };
-                this.on("push", closure);
-                this.on("drain", closure);
-            })
+            assert(false);
+        }
+    }
+    async get(): Promise<AsyncQueueResult<T>> {
+        if(this.data.length > 0 || this.draining) {
+            return this.get_core();
+        } else {
+            // data empty but the pool isn't draining; wait
+            return new Promise<AsyncQueueResult<T>>(resolve => {
+                this.data_waiters.push(() => {
+                    resolve(this.get_core());
+                });
+            });
         }
     }
     async get_next() {
@@ -136,5 +133,51 @@ export class ThreadPool<JobType, ResultType> implements AsyncIterable<ResultType
                 return q.results.get_next();
             }
         };
+    }
+}
+
+export class Funnel {
+    count = 0;
+    queue: (() => Promise<void>)[] = [];
+    waiting: (() => void)[] = [];
+    constructor(private limit: number) {}
+    dispatch_promise(promise_factory: () => Promise<void>) {
+        this.count++;
+        (async () => {
+            await promise_factory();
+            this.count--;
+            this.on_promise_finish();
+        })();
+    }
+    on_promise_finish() {
+        // run the next promise if needed
+        if(this.queue.length > 0) {
+            assert(this.count < this.limit);
+            const promise_factory = this.queue.shift()!;
+            this.dispatch_promise(promise_factory);
+        } else {
+            // notify anyone waiting
+            for(const f of this.waiting) {
+                f();
+            }
+        }
+    }
+    submit(promise_factory: () => Promise<void>) {
+        if(this.count < this.limit) {
+            // run it if we haven't maxed out
+            this.dispatch_promise(promise_factory);
+        } else {
+            // otherwise queue it
+            this.queue.push(promise_factory);
+        }
+    }
+    async wait_all() {
+        if(this.count == 0) {
+            return;
+        } else {
+            return new Promise<void>(resolve => {
+                this.waiting.push(resolve);
+            });
+        }
     }
 }
