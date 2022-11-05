@@ -9,12 +9,12 @@ type TestCase = {
 
 const cases: TestCase[] = [
     {
-        query: ["printf", "std::printf"],
+        query: ["printf"],
         path: "man3/printf.3.html"
     },
     {
-        query: ["fprintf", "std::fprintf"],
-        path: "man3/printf.3.html"
+        query: ["fprintf"],
+        path: "man3/fprintf.3p.html" // TODO: re-evaluate....?
     },
     {
         query: ["man"],
@@ -27,6 +27,10 @@ const cases: TestCase[] = [
     {
         query: ["hexdump"],
         path: "man1/hexdump.1.html"
+    },
+    {
+        query: ["strtol"],
+        path: "man3/strtol.3.html"
     }
 ];
 
