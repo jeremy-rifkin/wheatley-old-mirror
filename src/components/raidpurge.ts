@@ -7,6 +7,9 @@
  * handling of scammers, spammers, and bots.        *
  ***************************************************/
 
+import { BotComponent } from "../bot_component";
+export class RaidPurge extends BotComponent {}
+
 /**/
 /**/
 /**/
