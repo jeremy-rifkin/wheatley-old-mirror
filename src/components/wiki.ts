@@ -63,7 +63,7 @@ export function parse_article(name: string | null, content: string): WikiArticle
                 inline
             });
             current_state = state.field;
-        } else if(line.trim().toLowerCase() == "<!-- footer -->" && !code) {
+        } else if(line.trim().toLowerCase() == "[[[footer]]]" && !code) {
             current_state = state.footer;
         } else if(line.trim() == "[[[user author]]]" && !code) {
             data.set_author = true;
@@ -183,7 +183,7 @@ export class Wiki extends BotComponent {
         await interaction.reply({ embeds: [embed] });
     }
 
-    async on_message_create(message: Discord.Message) {
+    override async on_message_create(message: Discord.Message) {
         if(message.author.bot) return; // Ignore bots
         // preview command
         if(message.content.startsWith("!wiki-preview")) {
@@ -228,7 +228,7 @@ export class Wiki extends BotComponent {
         }
     }
 
-    async on_interaction_create(interaction: Discord.Interaction) {
+    override async on_interaction_create(interaction: Discord.Interaction) {
         if(interaction.isCommand() && (interaction.commandName == "wiki" || interaction.commandName == "howto")) {
             assert(interaction.isChatInputCommand());
             const query = interaction.options.getString("article_name");
