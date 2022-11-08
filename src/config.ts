@@ -7,3 +7,5 @@
  * handling of scammers, spammers, and bots.        *
  ***************************************************/
 
+export const react_blacklist = new Set([]);
+
