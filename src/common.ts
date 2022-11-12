@@ -1,6 +1,6 @@
 import * as Discord from "discord.js";
 import { strict as assert } from "assert";
-import { M } from "./utils";
+import { is_string, M } from "./utils";
 import { APIUser } from "discord-api-types/v10";
 
 // Common constants
@@ -123,8 +123,8 @@ export function is_root(user: Discord.User | Discord.PartialUser | APIUser): boo
 }
 
 export function is_authorized_admin(member: Discord.GuildMember | Discord.User | string): boolean {
-    if(typeof member === "string" || member instanceof String) {
-        return root_mod_ids_set.has(member as string);
+    if(is_string(member)) {
+        return root_mod_ids_set.has(member);
     } else {
         //return member.roles.cache.some(r => authorized_admin_roles.indexOf(r.id) > -1);
         return root_mod_ids_set.has(member.id);

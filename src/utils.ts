@@ -435,3 +435,30 @@ export function index_of_first_not_satisfying<T>(arr: T[], fn: (_: T) => boolean
     }
     return -1;
 }
+
+// https://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+export function escape_regex(string: string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+type Arr = readonly unknown[];
+
+type Iterables<Ts> = { [K in keyof Ts]: Iterable<Ts[K]> };
+
+export function* zip<Ts extends Arr>(...args: Iterables<Ts>): Generator<Ts> {
+    const iterators = args.map(arg => arg[Symbol.iterator]());
+    let values = iterators.map(it => it.next());
+    while(!values.some(value => value.done)) {
+        yield values.map(value => value.value) as unknown as Ts;
+        values = iterators.map(it => it.next());
+    }
+}
+
+// const a = [1,2,3];
+// const b = ["a", "b", "c"];
+// const c = [null, undefined, null];
+// zip(a, b, c);
+
+export function is_string(value: string | unknown): value is string {
+    return typeof value === "string" || value instanceof String;
+}
