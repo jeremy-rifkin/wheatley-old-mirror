@@ -71,7 +71,7 @@ type text_command_map_target = {
 
 export class Wheatley extends EventEmitter {
     private components: BotComponent[] = [];
-    readonly guild_command_manager = new GuildCommandManager();
+    readonly guild_command_manager;
     readonly tracker: MemberTracker; // TODO: Rename
     action_log_channel: Discord.TextChannel;
     staff_message_log: Discord.TextChannel;
@@ -100,8 +100,12 @@ export class Wheatley extends EventEmitter {
     // whether wheatley is ready (client is ready + wheatley has set up)
     ready = false;
 
+    readonly id = "597216680271282192";
+
     constructor(readonly client: Discord.Client, readonly database: DatabaseInterface) {
         super();
+
+        this.guild_command_manager = new GuildCommandManager(this);
 
         this.tracker = new MemberTracker(this);
         this.setup();
@@ -323,7 +327,7 @@ export class Wheatley extends EventEmitter {
                 const { command, deletable } = this.text_command_map.get(message.id)!;
                 this.text_command_map.remove(message.id);
                 if(deletable) {
-                    command.delete_replies();
+                    command.delete_replies_if_replied();
                 }
             } else if(this.deletable_map.has(message.id)) {
                 const target = this.deletable_map.get(message.id)!;
@@ -353,7 +357,7 @@ export class Wheatley extends EventEmitter {
                 const message = !new_message.partial ? new_message : await new_message.fetch();
                 if(!await this.handle_command(message, command)) {
                     // returns false if the message was not a wheatley command; delete replies and remove from map
-                    command.delete_replies();
+                    command.delete_replies_if_replied();
                     this.text_command_map.remove(new_message.id);
                 }
             }
