@@ -10,5 +10,5 @@
         "noImplicitOverride": true,
         "outDir": "build",
     },
-    "exclude": ["node_modules", "indexes/"]
+    "exclude": ["node_modules", "build", "indexes/"]
 }
