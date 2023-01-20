@@ -13,7 +13,7 @@ jobs:
     - name: dependencies
       run: |
            npm install -g typescript
-           npm i --dev
+           npm i
     - name: build bot
       run: tsc
     - name: build cppref scraper
