@@ -78,10 +78,6 @@ export class TheButton extends BotComponent {
                 new Discord.ButtonBuilder()
                     .setCustomId("the-button-scoreboard")
                     .setLabel("Scoreboard")
-                    .setStyle(Discord.ButtonStyle.Secondary),
-                new Discord.ButtonBuilder()
-                    .setCustomId("the-button-stats")
-                    .setLabel("Stats")
                     .setStyle(Discord.ButtonStyle.Secondary)
             );
         return {
