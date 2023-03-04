@@ -7,7 +7,7 @@
  * handling of scammers, spammers, and bots.        *
  ***************************************************/
 
-import { BotComponent } from "../bot_component";
+import { BotComponent } from "../bot-component";
 export class Composite extends BotComponent {}
 
 /**/
