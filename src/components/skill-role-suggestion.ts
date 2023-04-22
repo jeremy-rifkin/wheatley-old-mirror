@@ -2,8 +2,8 @@ import * as Discord from "discord.js";
 
 import { strict as assert } from "assert";
 
-import { M, SelfClearingMap, unwrap } from "../utils.js";
-import { colors, MINUTE, TCCPP_ID } from "../common.js";
+import { M, SelfClearingMap, departialize, unwrap } from "../utils.js";
+import { colors, MINUTE, skill_role_suggestion_log_id, TCCPP_ID } from "../common.js";
 import { BotComponent } from "../bot-component.js";
 import { Wheatley } from "../wheatley.js";
 import { MessageContextMenuCommandBuilder, UserContextMenuCommandBuilder } from "../command.js";
@@ -97,26 +97,55 @@ export class SkillRoleSuggestion extends BotComponent {
             const suggestion_modal = new Discord.EmbedBuilder()
                 .setColor(colors.green)
                 .setAuthor({
-                    name: suggester.displayName,
-                    iconURL: suggester.avatarURL() ?? suggester.user.displayAvatarURL()
+                    name: member.displayName,
+                    iconURL: member.avatarURL() ?? member.user.displayAvatarURL()
                 })
                 .setFooter({
-                    text: `Suggested for ${member.displayName} ${member.user.id} by ${interaction.user.id}`,
-                    iconURL: member.avatarURL() ?? member.user.displayAvatarURL()
+                    text: `Suggested by ${suggester.displayName} ${suggester.user.id} for ${member.user.id}`,
+                    iconURL: suggester.avatarURL() ?? suggester.user.displayAvatarURL()
                 });
             const comments = interaction.fields.getTextInputValue("skill-role-suggestion-modal-comments");
-            let description = `Skill role suggestion for <@${member.user.id}>: ${role}`;
+            let description = `Skill role suggestion for <@${member.user.id}> by <@${suggester.user.id}>: ${role}`;
             if(comments.length > 0) {
                 description += `\nComments: ${comments}`;
             }
             suggestion_modal.setDescription(description);
-            await this.wheatley.skill_role_suggestion_log.send({
+            const suggestion = await this.wheatley.skill_role_suggestion_log.send({
                 embeds: [suggestion_modal]
             });
             await interaction.reply({
                 content: "Thank you, your suggestion has been received",
                 ephemeral: true
             });
+            await suggestion.react("👍");
+            await suggestion.react("👎");
+            await suggestion.react("🧵");
+        }
+    }
+
+    override async on_reaction_add(
+        reaction: Discord.MessageReaction | Discord.PartialMessageReaction,
+        user: Discord.User                | Discord.PartialUser
+    ) {
+        if(reaction.message.channel.id != skill_role_suggestion_log_id || user.id == this.wheatley.id) {
+            return;
+        }
+        if(reaction.partial) {
+            reaction = await reaction.fetch();
+        }
+        if(reaction.emoji.name == "🧵") {
+            const message = await departialize(reaction.message);
+            const name = await (async () => {
+                if(message.author.id == this.wheatley.id) {
+                    return message.embeds[0].author?.name;
+                } else {
+                    return null;
+                }
+            })();
+            await message.startThread({
+                name: name ? `- ${name}` : "Discussion"
+            });
+            await unwrap(message.reactions.cache.get("🧵")).remove();
         }
     }
 }
