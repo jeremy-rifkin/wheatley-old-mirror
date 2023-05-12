@@ -152,9 +152,13 @@ export async function delay(n: number): Promise<void> {
 export class SelfClearingSet<T> {
     contents = new Map<T, number>();
     duration: number;
+    interval: NodeJS.Timer;
     constructor(duration: number, interval?: number) {
         this.duration = duration;
-        setInterval(this.sweep.bind(this), interval ?? this.duration);
+        this.interval = setInterval(this.sweep.bind(this), interval ?? this.duration);
+    }
+    destroy() {
+        clearInterval(this.interval);
     }
     sweep() {
         const now = Date.now();
@@ -178,9 +182,13 @@ export class SelfClearingSet<T> {
 export class SelfClearingMap<K, V> {
     contents = new Map<K, [number, V]>();
     duration: number;
+    interval: NodeJS.Timer;
     constructor(duration: number, interval?: number) {
         this.duration = duration;
-        setInterval(this.sweep.bind(this), interval ?? this.duration);
+        this.interval = setInterval(this.sweep.bind(this), interval ?? this.duration);
+    }
+    destroy() {
+        clearInterval(this.interval);
     }
     sweep() {
         const now = Date.now();
@@ -349,8 +357,7 @@ export function get_tag(channel: Discord.ForumChannel, name: string) {
 }
 
 export async function fetch_active_threads(forum: Discord.ForumChannel) {
-    const { threads, hasMore } = await forum.threads.fetchActive();
-    assert(!hasMore); // todo: how to handle
+    const { threads } = await forum.threads.fetchActive();
     return threads;
 }
 
@@ -483,4 +490,17 @@ export function string_split(str: string, delim: string, limit: number) {
         parts.splice(limit - 1, parts.length - limit + 1, parts.slice(limit - 1).join(delim));
     }
     return parts;
+}
+
+export function max<T, U>(fn: (x: T) => U, ...items: [T, ...T[]]) {
+    let max_i = 0;
+    let max_v = fn(items[0]);
+    for(let i = 1; i < items.length; i++) {
+        const v = fn(items[i]);
+        if(v > max_v) {
+            max_i = i;
+            max_v = v;
+        }
+    }
+    return items[max_i];
 }
