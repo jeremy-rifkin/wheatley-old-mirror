@@ -21,17 +21,32 @@ export class GuildCommandManager {
         try {
             this.finalized = true;
             const rest = new REST({ version: "10" }).setToken(token);
-            M.log("Sending guild commands");
-            await rest.put(
-                Routes.applicationCommands(this.wheatley.id),
-                { body: this.commands },
-            );
-            // Clear any previous guild commands
-            await rest.put(
-                Routes.applicationGuildCommands(this.wheatley.id, TCCPP_ID),
-                { body: [] },
-            );
-            M.log("Finished sending guild commands");
+            if (!this.wheatley.freestanding) {
+                M.log("Sending application commands");
+                await rest.put(
+                    Routes.applicationCommands(this.wheatley.id),
+                    { body: this.commands },
+                );
+                // Clear any previous guild commands
+                await rest.put(
+                    Routes.applicationGuildCommands(this.wheatley.id, this.wheatley.guildId),
+                    { body: [] },
+                );
+            }
+            else {
+                M.log("Sending application guild commands");
+                // Clear any previous global commands
+                await rest.put(
+                    Routes.applicationCommands(this.wheatley.id),
+                    { body: [] },
+                );
+                // use guild-specific commands in freestanding mode
+                await rest.put(
+                    Routes.applicationGuildCommands(this.wheatley.id, this.wheatley.guildId),
+                    { body: this.commands },
+                );
+            }
+            M.log("Finished sending commands");
         } catch(e) {
             M.log(util.inspect({ body: this.commands }, { showHidden: false, depth: null, colors: true }));
             critical_error(e);

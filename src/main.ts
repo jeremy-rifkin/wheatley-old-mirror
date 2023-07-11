@@ -70,8 +70,6 @@ async function main() {
 
     client.on("ready", async () => {
         M.log(`Logged in as ${client.user!.tag}`);
-        //client.user!.setStatus("invisible");
-        fetch_root_mod_list(client); // fetch list of roots and mods, replace hard-coded list
     });
 
     M.debug("Setting up services");
@@ -87,15 +85,15 @@ async function main() {
     }
 }
 
-(() => {
-    main();
+(async () => {
+    return main();
 })();
 
 // don't crash, try to restart
-process.on("uncaughtException", error => {
+process.on("uncaughtException", (error) => {
     critical_error("uncaughtException", error);
     wheatley.destroy();
-    main();
+    return main();
 });
 
 // Last line of defense
