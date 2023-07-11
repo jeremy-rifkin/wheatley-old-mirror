@@ -122,6 +122,11 @@ export function parse_article(name: string | null, content: string): [WikiArticl
     ];
 }
 
+/**
+ * Parses wiki articles and adds the /wiki or /howto command for displaying them.
+ *
+ * Freestanding.
+ */
 export class Wiki extends BotComponent {
     articles: Record<string, WikiArticle> = {};
     article_aliases: Map<string, string> = new Map();
@@ -136,12 +141,15 @@ export class Wiki extends BotComponent {
                     title: "query",
                     description: "Query",
                     required: true,
-                    autocomplete: query =>
-                        Object.values(this.articles)
+                    autocomplete: query => {
+                        const res = Object.values(this.articles)
                             .map(article => article.title)
                             .filter(title => title.toLowerCase().includes(query))
                             .map(title => ({ name: title, value: title }))
                             .slice(0, 25)
+                        M.debug(res);
+                        return res;
+                    }
                 })
                 .set_handler(this.wiki.bind(this))
         );
@@ -221,6 +229,8 @@ export class Wiki extends BotComponent {
     }
 
     async wiki(command: TextBasedCommand, query: string) {
+        M.debug('displaying wiki'); // FIXME remove
+
         const matching_articles = Object
             .entries(this.articles)
             .filter(([ name, { title }]) => name == query.replaceAll("-", "_") || title == query)

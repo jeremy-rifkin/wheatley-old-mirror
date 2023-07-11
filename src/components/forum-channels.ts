@@ -35,9 +35,15 @@ function create_embed(title: string | undefined, color: number, msg: string) {
     return embed;
 }
 
-// TODO: Improve initial message, make it more friendly to the eye
-// reduce time of initial message
+/**
+ * Support for marking threads as solved and other features.
+ *
+ * Not freestanding.
+ */
 export class ForumChannels extends BotComponent {
+    // TODO: Improve initial message, make it more friendly to the eye
+    //       reduce time of initial message
+
     // don't prompt twice within 2 hours - that's just annoying
     readonly possibly_resolved = new SelfClearingSet<string>(2 * 60 * MINUTE);
     readonly timeout_map = new Map<string, NodeJS.Timeout>();

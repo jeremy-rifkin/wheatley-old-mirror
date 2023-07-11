@@ -8,6 +8,12 @@
  ***************************************************/
 
 import { BotComponent } from "../bot-component.js";
+
+/**
+ * Part of raid prevention.
+ *
+ * Not freestanding.
+ */
 export class RaidPurge extends BotComponent {}
 
 /**/
