@@ -1,5 +1,5 @@
 node_modules
-auth.key
+auth.*
 .idea
 *.js
 ./W*/
