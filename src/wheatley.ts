@@ -416,7 +416,6 @@ export class Wheatley extends EventEmitter {
     async handle_command(message: Discord.Message, prev_command_obj?: TextBasedCommand) {
         const match = message.content.match(Wheatley.command_regex);
         if(match) {
-            M.debug("handling command") // FIXME remove
             const command_name = match[1];
             if(command_name in this.text_commands) {
                 const command = this.text_commands[command_name];
@@ -561,7 +560,6 @@ export class Wheatley extends EventEmitter {
     }
 
     async on_interaction(interaction: Discord.Interaction) {
-        M.debug("handling interaction"); // FIXME remove
         try {
             if(interaction.isChatInputCommand()) {
                 if(interaction.commandName in this.text_commands) {

@@ -229,8 +229,6 @@ export class Wiki extends BotComponent {
     }
 
     async wiki(command: TextBasedCommand, query: string) {
-        M.debug('displaying wiki'); // FIXME remove
-
         const matching_articles = Object
             .entries(this.articles)
             .filter(([ name, { title }]) => name == query.replaceAll("-", "_") || title == query)
