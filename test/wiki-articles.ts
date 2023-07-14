@@ -24,7 +24,7 @@ describe("parse wiki articles", () => {
         }
         it(`${name} article should parse`, async () => {
             const content = await fs.promises.readFile(file_path, { encoding: "utf-8" });
-            parse_article(name, content);
+            parse_article(content);
         });
     }
 });
