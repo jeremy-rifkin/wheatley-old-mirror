@@ -87,7 +87,7 @@ type authentication = {
     guild: string;
     token: string;
     freestanding?: boolean;
-}
+};
 
 export class Wheatley extends EventEmitter {
     private components: BotComponent[] = [];
