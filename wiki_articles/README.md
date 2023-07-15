@@ -1,4 +1,6 @@
-These wiki articles were contributed by member of the Together C & C++ discord server
+# Together C & C++ Wiki, aka. Howto Articles
+
+These wiki articles were contributed by member of the Together C & C++ discord server.
 
 ## How to Contribute
 
