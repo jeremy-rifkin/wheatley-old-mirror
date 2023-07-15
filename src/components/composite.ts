@@ -8,6 +8,12 @@
  ***************************************************/
 
 import { BotComponent } from "../bot-component.js";
+
+/**
+ * Sensitive.
+ *
+ * Not freestanding.
+ */
 export class Composite extends BotComponent {}
 
 /**/
