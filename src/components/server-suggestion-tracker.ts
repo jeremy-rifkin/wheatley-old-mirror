@@ -249,8 +249,11 @@ export class ServerSuggestionTracker extends BotComponent {
                 maybe: 0
             };
             const updateDbPromise = this.wheatley.database.update();
-            // add react options
-            await Promise.all(resolution_reactions.map(reaction => status_message.react(reaction)));
+            for(const r of resolution_reactions) {
+                // This code is intentionally synchronous so that the suggested
+                // actions always appear in the same order.
+                await status_message.react(r);
+            }
             await updateDbPromise;
         } catch(e) {
             critical_error("error during open_suggestion", e);
