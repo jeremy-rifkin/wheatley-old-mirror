@@ -168,8 +168,7 @@ class ArticleParser {
                     if (tail !== "\n") {
                         prefix += "\n";
                     }
-                }
-                else if (!/\s/.test(tail)) {
+                } else if (!/\s/.test(tail)) {
                     prefix += " ";
                 }
             }
