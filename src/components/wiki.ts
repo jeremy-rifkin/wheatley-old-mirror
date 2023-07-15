@@ -141,11 +141,12 @@ export class Wiki extends BotComponent {
                     title: "query",
                     description: "Query",
                     required: true,
-                    autocomplete: query => Object.values(this.articles)
-                        .map(article => article.title)
-                        .filter(title => title.toLowerCase().includes(query))
-                        .map(title => ({ name: title, value: title }))
-                        .slice(0, 25)
+                    autocomplete: query =>
+                        Object.values(this.articles)
+                            .map(article => article.title)
+                            .filter(title => title.toLowerCase().includes(query))
+                            .map(title => ({ name: title, value: title }))
+                            .slice(0, 25)
                 })
                 .set_handler(this.wiki.bind(this))
         );
