@@ -17,7 +17,7 @@ while(i < 10) {
 ```
 
 <!-- inline -->
-## Example: Out-of--Bounds Access
+## Example: Out-of-Bounds Access
 ```cpp
 int arr[10];
 for(int i = 0; i < 20; i++) {
