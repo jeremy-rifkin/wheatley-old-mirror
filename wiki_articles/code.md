@@ -1,19 +1,18 @@
-[[[alias code]]]
+<!-- alias code -->
 
 # How to Format Code on Discord
 
-## [Markup]
-\`\`\`cpp
-
-int main() {}
-
+<!-- inline -->
+## Markup
+\`\`\`cpp  
+int main() {}  
 \`\`\`
 
-## [Result]
+<!-- inline -->
+## Result
 ```cpp
 int main() {}
 ```
 
-[[[footer]]]
-
+<!-- footer -->
 Note: Back-tick (`) not quotes (')

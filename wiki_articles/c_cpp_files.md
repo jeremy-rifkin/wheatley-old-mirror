@@ -1,5 +1,6 @@
 # What Are the File Types in C/C++
 
+<!-- inline -->
 ## [Source Files: `.c|.cpp|.cxx|...`]
 - function definitions
 - global variable definitions
@@ -8,6 +9,7 @@
 Each file is compiled independently, and in parallel.
 Don't `#include` them, but compile each.
 
+<!-- inline -->
 ## [Header Files: `.h|.hpp|.tpp|...`]
 - forward-declarations/prototypes
 - type declarations
@@ -25,11 +27,13 @@ Each source file becomes a *translation unit* during
 
 Sometimes `.ipp` or `.tpp` for C++ are used for internal headers with function definitions.
 
-## [See Also]
-📄 [How do header and source files in C work?](https://stackoverflow.com/q/5904530/5740428)
+<!-- inline -->
+## See Also
+📄 [How do header and source files in C work?](https://stackoverflow.com/q/5904530/5740428)  
 📄 [What are 'Include Guards' and #pragma once?](https://64.github.io/cpp-faq/include-guards-pragma-once/)
 
-## [Common Errors]
-⛔ [Redefinition of ... (compiler)](https://stackoverflow.com/q/3746484/5740428)
-⛔ [Multiple definition of ... (linker)](https://stackoverflow.com/q/17764661/5740428)
+<!-- inline -->
+## Common Errors
+⛔ [Redefinition of ... (compiler)](https://stackoverflow.com/q/3746484/5740428)  
+⛔ [Multiple definition of ... (linker)](https://stackoverflow.com/q/17764661/5740428)  
 ⛔ [Splitting templates into source/header](https://stackoverflow.com/q/1724036/5740428)

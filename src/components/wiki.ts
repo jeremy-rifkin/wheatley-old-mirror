@@ -28,6 +28,7 @@ type WikiArticle = {
     body?: string;
     fields: WikiField[],
     footer?: string;
+    image?: string;
     set_author: boolean;
     no_embed: boolean;
 };
@@ -38,7 +39,11 @@ type WikiField = {
     inline: boolean;
 }
 
-enum parse_state { body, field, footer, before_title, before_field, done }
+enum parse_state { body, field, footer, before_inline_field, done }
+
+function endsWithNonWhitespace(str: string): boolean {
+    return str.length !== 0 && !/\s/.test(str[str.length - 1]);
+}
 
 /**
  * One-time use class for parsing articles.
@@ -50,6 +55,7 @@ class ArticleParser {
     private _body?: string
     private _fields: WikiField[] = []
     private _footer?: string;
+    private _image?: string;
     private _set_author?: true;
     private _no_embed?: true;
 
@@ -62,8 +68,7 @@ class ArticleParser {
             this.parse_line(line);
         }
         assert(!this._in_code, "Unclosed code block in wiki article");
-        assert(this._current_state !== parse_state.before_title, "Trailing title directive");
-        assert(this._current_state !== parse_state.before_field, "Trailing (inline) field directive");
+        assert(this._current_state !== parse_state.before_inline_field, "Trailing inline field directive");
 
         this._body = this._body.trim();
         if(this._body === "") {
@@ -108,13 +113,14 @@ class ArticleParser {
         const level = line.search(/[^#]/);
         assert(level >= 1, "Cannot parse heading that has no heading level");
 
-        if(this._current_state === parse_state.before_title) {
-            assert(level === 1, "Title must be heading level 1");
+        if(level === 1) {
             this._title = line.substring(1).trim();
             this._current_state = parse_state.body;
-        } else if(this._current_state === parse_state.before_field) {
-            assert(level === 2, "Field title must be heading level 2");
-            this._fields[this._fields.length - 1].name = line.substring(2).trim();
+        } else if(level === 2) {
+            const name = line.substring(2).trim();
+            const inline = this._current_state === parse_state.before_inline_field;
+            const field = {name, value: '', inline};
+            this._fields.push(field);
             this._current_state = parse_state.field;
             return;
         } else {
@@ -128,21 +134,16 @@ class ArticleParser {
      * @param directive the directive to parse
      */
     parse_directive(directive: string): void {
-        if(directive === "title") {
-            assert(this._current_state === parse_state.body, "Title directive can only appear in body");
-            this._current_state = parse_state.before_title;
-        } else if(directive === "field") {
-            this._fields.push({name: '', value: '', inline: false});
-            this._current_state = parse_state.before_field;
-        } else if(directive === "inline field") {
-            this._fields.push({name: '', value: '', inline: true});
-            this._current_state = parse_state.before_field;
+        if(directive === "inline") {
+            this._current_state = parse_state.before_inline_field;
         } else if(directive === "footer") {
             this._current_state = parse_state.footer;
         } else if(directive === "user author") {
             this._set_author = true;
         } else if(directive === "no embed") {
             this._no_embed = true;
+        } else if (directive.startsWith("image ")) {
+            this._image = directive.substring("image ".length).trim();
         } else if(directive.startsWith("alias ")) {
             const aliases = directive
                 .substring("alias ".length)
@@ -157,21 +158,35 @@ class ArticleParser {
 
     parse_regular_line(line: string): void {
         const requires_line_break = this._in_code ||
+            line.startsWith("```") ||
             line.startsWith("#") ||
-            line.endsWith("  ") ||
             line.trim() === "" ||
             line.trim().startsWith("- ") ||
             line.trim().match(/^\d+.*$/);
-        const terminated_line = requires_line_break ? line + "\n" : line;
+        const terminated_line = requires_line_break || line.endsWith("  ") ? line + "\n" : line;
+
+        const plus_line = (prefix: string) => {
+            if (prefix.length !== 0) {
+                const tail = prefix[prefix.length - 1];
+                if (requires_line_break) {
+                    if (tail !== "\n") {
+                        prefix += "\n";
+                    }
+                }
+                else if (!/\s/.test(tail)) {
+                    prefix += " ";
+                }
+            }
+            return prefix + terminated_line;
+        };
 
         if(this._current_state === parse_state.body) {
-            this._body += (this._body!.endsWith(" ") ? "" : " ") + terminated_line;
+            this._body = plus_line(this._body!);
         } else if(this._current_state === parse_state.field) {
-            this._fields[this._fields.length - 1].value +=
-                (this._fields[this._fields.length - 1].value.endsWith(" ") ? "" : " ") + terminated_line;
+            this._fields[this._fields.length - 1].value
+                = plus_line(this._fields[this._fields.length - 1].value);
         } else if(this._current_state === parse_state.footer) {
-            this._footer = this._footer ?? "";
-            this._footer += (this._footer.endsWith(" ") ? "" : " ") + terminated_line;
+            this._footer = plus_line(this._footer ?? "");
         } else {
             assert(false);
         }
@@ -188,6 +203,7 @@ class ArticleParser {
             body: this._body,
             fields: this._fields,
             footer: this._footer,
+            image: this._image,
             set_author: this._set_author ?? false,
             no_embed: this._no_embed ?? false,
         };
@@ -268,10 +284,17 @@ export class Wiki extends BotComponent {
                 continue;
             }
             const content = await fs.promises.readFile(file_path, { encoding: "utf-8" });
-            const [ article, aliases ] = parse_article(content);
+            let parsed
+            try {
+                parsed = parse_article(content);
+            } catch (e: any) {
+                M.error(`Failed to parse article ${file_path}: ${e.message}`);
+                continue;
+            }
+            const [ article, aliases ] = parsed
             this.articles[name] = article;
             for(const alias of aliases) {
-                this.article_aliases.set(name, alias);
+                this.article_aliases.set(alias, name);
             }
         }
     }
@@ -287,6 +310,7 @@ export class Wiki extends BotComponent {
             const embed = new Discord.EmbedBuilder()
                 .setColor(colors.color)
                 .setTitle(article.title)
+                .setImage(article.image ?? null)
                 .setDescription(article.body ?? null)
                 .setFields(article.fields);
             if(article.set_author) {
