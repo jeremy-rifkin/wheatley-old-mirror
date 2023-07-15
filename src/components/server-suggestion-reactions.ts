@@ -37,18 +37,18 @@ export class ServerSuggestionReactions extends BotComponent {
     }
 
     async handle_fetched_message(message: Discord.Message) {
-        message.reactions.cache.forEach(async reaction => {
+        const promises = message.reactions.cache.map(async reaction => {
             const users = await reaction.users.fetch();
             ///M.debug(reaction.emoji.name, users.map(u => [u.id, u.tag]));
-            for(const [ id, user ] of users) {
-                if(react_blacklist.has(id)) {
+            const removeReactionPromises = users.map(user => {
+                if(react_blacklist.has(user.id)) {
                     M.log("removing reaction by blacklisted user from", {
                         content: reaction.message.content,
                         reaction: reaction.emoji.name,
                         time: reaction.message.createdAt,
                         user: [ user.tag, user.id ]
                     });
-                    reaction.users.remove(id);
+                    return reaction.users.remove(user.id);
                 } else if(root_only_reacts.has(reaction.emoji.name!)) {
                     if(!is_root(user)) {
                         M.log("removing non-root reaction", {
@@ -57,11 +57,15 @@ export class ServerSuggestionReactions extends BotComponent {
                             time: reaction.message.createdAt,
                             user: [ user.tag, user.id ]
                         });
-                        reaction.users.remove(id);
+                        return reaction.users.remove(user.id);
                     }
                 }
-            }
+                return null;
+            }).filter(promise => promise !== null);
+
+            await Promise.all(removeReactionPromises);
         });
+        await Promise.all(promises);
     }
 
     // handle *everything* since TRACKER_START_TIME
@@ -140,7 +144,7 @@ export class ServerSuggestionReactions extends BotComponent {
                         time: reaction.message.createdAt,
                         user: [ user.tag, user.id ]
                     });
-                    reaction.users.remove(user.id);
+                    await reaction.users.remove(user.id);
                 }
             }
         }

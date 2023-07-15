@@ -141,9 +141,11 @@ export class Roulette extends BotComponent {
                 await this.update_scoreboard(command.user.id);
             }
         } else {
-            command.reply("Warning: This is __Russian Roulette__. Losing will result in a 30 minute timeout."
-                        + " Proceed at your own risk.");
+            const msg = "Warning: This is __Russian Roulette__. Losing will result in a 30 minute timeout."
+                + " Proceed at your own risk.";
+            const replyPromise = command.reply(msg);
             this.warned_users.insert(command.user.id);
+            await replyPromise;
         }
     }
 

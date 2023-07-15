@@ -31,9 +31,8 @@ export class AntiAutoreact extends BotComponent {
             const message = await departialize(reaction.message);
             if(obnoxious_autoreact_immunity.has(message.author.id)) {
                 M.debug("Auto-react being removed");
-                for(const [ id, _ ] of reaction.users.cache) {
-                    reaction.users.remove(id);
-                }
+
+                await Promise.all(reaction.users.cache.map(user => reaction.users.remove(user)));
             }
         }
     }

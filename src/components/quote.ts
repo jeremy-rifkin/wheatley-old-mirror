@@ -273,7 +273,7 @@ export class Quote extends BotComponent {
                             .setColor(colors.red)
                             .setDescription("Error: You don't have permissions for that channel")
                     );
-                    this.wheatley.zelis.send("quote exploit attempt");
+                    await this.wheatley.zelis.send("quote exploit attempt");
                     continue;
                 }
                 let messages: Discord.Message[] = [];

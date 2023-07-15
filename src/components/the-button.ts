@@ -256,7 +256,7 @@ export class TheButton extends BotComponent {
             if(scoreboard[interaction.user.id].tag == "") {
                 scoreboard[interaction.user.id].tag = interaction.user.tag;
             }
-            this.update_message();
+            const updateMsgPromise = this.update_message();
             const time_since_reset = DAY - delta;
             const points = F(time_since_reset / DAY) * DAY / 1000 / 60;
             scoreboard[interaction.user.id].score += points;
@@ -277,6 +277,7 @@ export class TheButton extends BotComponent {
                 ephemeral: true
             });
             await this.update_database();
+            await updateMsgPromise;
         }
         if(interaction.isButton() && interaction.customId == "the-button-scoreboard") {
             const scores = this.get_scoreboard_entries().slice(0, 15);

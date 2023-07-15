@@ -107,7 +107,7 @@ export class ForumChannels extends BotComponent {
         // thread.lastMessageId can be null if there are no messages (possibly and the forum starter has been deleted)
         // if the thread author hasn't sent an initial message it'll mess things up, this needs manual review
         if(thread.lastMessageId == null) {
-            this.wheatley.zelis.send(`thread.lastMessageId is null for ${thread.url}`);
+            await this.wheatley.zelis.send(`thread.lastMessageId is null for ${thread.url}`);
             return;
         }
         const now = Date.now();

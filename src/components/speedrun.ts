@@ -17,7 +17,7 @@ export class Speedrun extends BotComponent {
         this.wheatley.tracker.add_submodule({ on_ban: this.on_ban.bind(this) });
     }
 
-    on_ban(ban: Discord.GuildBan, now: number) {
+    async on_ban(ban: Discord.GuildBan, now: number) {
         M.debug("speedrun check");
         const user = ban.user;
         // get user info
@@ -53,6 +53,6 @@ export class Speedrun extends BotComponent {
                 text: `ID: ${user.id}`
             })
             .setTimestamp();
-        this.wheatley.action_log_channel.send({ embeds: [embed] });
+        await this.wheatley.action_log_channel.send({ embeds: [embed] });
     }
 }

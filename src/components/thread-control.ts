@@ -98,8 +98,9 @@ export class ThreadControl extends BotComponent {
                 return;
             }
             await thread.setName(name);
+            let replyPromise;
             if(command.is_slash()) {
-                command.reply("✅", true);
+                replyPromise = command.reply("✅", true);
             } else {
                 await command.delete_invocation();
             }
@@ -112,6 +113,9 @@ export class ThreadControl extends BotComponent {
                 if(message.type == Discord.MessageType.Default && message.author.id == this.wheatley.id) {
                     message.delete();
                 }
+            }
+            if (replyPromise) {
+                await replyPromise;
             }
         }
     }

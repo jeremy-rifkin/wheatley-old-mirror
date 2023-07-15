@@ -181,7 +181,7 @@ export class Starboard extends BotComponent {
     }
 
     async update_starboard(message: Discord.Message) {
-        this.mutex.lock(message.id);
+        await this.mutex.lock(message.id);
         try {
             const make_embeds = () => make_quote_embeds(
                 [message],
@@ -246,7 +246,7 @@ export class Starboard extends BotComponent {
             await this.wheatley.staff_flag_log.send({
                 content: `${action} message from <@${message.author.id}> for `
                     + `${delete_reaction.count} ${delete_reaction.emoji.name} reactions`
-                    + `\n${await this.reactions_string(message)}`
+                    + `\n${this.reactions_string(message)}`
                     + "\n" + (await delete_reaction.users.fetch()).map(user => `<@${user.id}> ${user.tag}`).join("\n"),
                 ...await make_quote_embeds(
                     [message],
@@ -325,7 +325,7 @@ export class Starboard extends BotComponent {
 
     override async on_message_delete(message: Discord.Message<boolean> | Discord.PartialMessage) {
         if(message.id in this.data.starboard) {
-            this.mutex.lock(message.id);
+            await this.mutex.lock(message.id);
             try {
                 await this.wheatley.starboard_channel.messages.delete(this.data.starboard[message.id]);
                 delete this.data.starboard[message.id];

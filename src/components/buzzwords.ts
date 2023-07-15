@@ -207,14 +207,14 @@ export class Buzzwords extends BotComponent {
 
     override async on_ready() {
         if(ENABLED) { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
-            this.update_database();
+            const promises = Promise.all([ this.update_database(), this.reflowRoles() ]);
             this.timeout = setTimeout(() => {
                 this.update_database();
             }, MINUTE);
-            this.reflowRoles();
             this.interval = setInterval(() => {
                 this.reflowRoles();
             }, 10 * MINUTE);
+            await promises;
         }
     }
 
@@ -373,7 +373,7 @@ export class Buzzwords extends BotComponent {
                     this.set_points(id, tag, parseInt(amount));
                     if(member instanceof Discord.GuildMember) await this.updateRolesSingle(member);
                     await message.reply("Done");
-                    this.update_database();
+                    await this.update_database();
                 } else {
                     await message.reply({
                         embeds: [

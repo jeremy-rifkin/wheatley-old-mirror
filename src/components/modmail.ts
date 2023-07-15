@@ -21,11 +21,10 @@ import { Wheatley } from "../wheatley.js";
 const RATELIMIT_TIME = 5 * MINUTE;
 
 function create_embed(title: string, msg: string) {
-    const embed = new Discord.EmbedBuilder()
+    return new Discord.EmbedBuilder()
         .setColor(colors.color)
         .setTitle(title)
         .setDescription(msg);
-    return embed;
 }
 
 type database_schema = number;
@@ -60,7 +59,7 @@ export class Modmail extends BotComponent {
                 const member = await this.wheatley.TCCPP.members.fetch(interaction.member.user.id);
                 // make the thread
                 const id = this.modmail_id_counter++;
-                this.update_db();
+                const updateDbPromise = this.update_db();
                 const thread =  await this.wheatley.rules_channel.threads.create({
                     type: Discord.ChannelType.PrivateThread,
                     invitable: false,
@@ -94,6 +93,7 @@ export class Modmail extends BotComponent {
                         roles: [moderators_role_id]
                     }
                 });
+                await updateDbPromise;
             } catch(e) {
                 await interaction.update({
                     content: "Something went wrong internally...",

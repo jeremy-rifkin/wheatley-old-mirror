@@ -279,7 +279,7 @@ export class Format extends BotComponent {
         } catch(e) {
             critical_error(e);
             try {
-                message.reply("Internal error while running !f");
+                await message.reply("Internal error while running !f");
             } catch(e) {
                 critical_error(e);
             }

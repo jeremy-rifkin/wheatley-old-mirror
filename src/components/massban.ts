@@ -25,7 +25,7 @@ export class Massban extends BotComponent {
             if(message.content.startsWith("!wban")) {
                 assert(message.member != null);
                 if(is_authorized_admin(message.member)) {
-                    this.do_mass_ban(message);
+                    await this.do_mass_ban(message);
                 } else {
                     await message.reply(`Unauthorized ${pepereally}`);
                 }
@@ -35,7 +35,7 @@ export class Massban extends BotComponent {
         }
     }
 
-    do_mass_ban(msg: Discord.Message) {
+    async do_mass_ban(msg: Discord.Message) {
         // TODO: Do DM logic?
         // TODO: Set entry.purged if necessary?
         M.log("Got massban command");
@@ -48,14 +48,15 @@ export class Massban extends BotComponent {
             for(const id of ids) {
                 msg.guild.members.ban(id, { reason: "[[Wheatley]] Manual mass-ban" });
             }
-            msg.reply("Done.");
+            const replyPromise = msg.reply("Done.");
             // TODO: use long-message logic?
             const embed = new Discord.EmbedBuilder()
                 .setColor(colors.color)
                 .setTitle(`<@!${msg.author.id}> banned ${ids.length} users`)
                 .setDescription(`\`\`\`\n${ids.join("\n")}\n\`\`\``)
                 .setTimestamp();
-            this.wheatley.action_log_channel.send({ embeds: [embed] });
+            await this.wheatley.action_log_channel.send({ embeds: [embed] });
+            await replyPromise;
         }
     }
 }
