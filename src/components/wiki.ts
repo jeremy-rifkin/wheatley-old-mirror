@@ -41,29 +41,25 @@ type WikiField = {
 
 enum parse_state { body, field, footer, before_inline_field, done }
 
-function endsWithNonWhitespace(str: string): boolean {
-    return str.length !== 0 && !/\s/.test(str[str.length - 1]);
-}
-
 /**
  * One-time use class for parsing articles.
  */
 class ArticleParser {
-    private readonly _article_aliases = new Set<string>()
+    private readonly _article_aliases = new Set<string>();
 
     private _title: string;
-    private _body?: string
-    private _fields: WikiField[] = []
+    private _body?: string;
+    private _fields: WikiField[] = [];
     private _footer?: string;
     private _image?: string;
     private _set_author?: true;
     private _no_embed?: true;
 
-    private _current_state = parse_state.body
+    private _current_state = parse_state.body;
     private _in_code = false;
 
     parse(content: string) {
-        this._body = ""
+        this._body = "";
         for(const line of content.split(/\r?\n/)) {
             this.parse_line(line);
         }
@@ -119,7 +115,7 @@ class ArticleParser {
         } else if(level === 2) {
             const name = line.substring(2).trim();
             const inline = this._current_state === parse_state.before_inline_field;
-            const field = {name, value: '', inline};
+            const field = { name, value: "", inline };
             this._fields.push(field);
             this._current_state = parse_state.field;
             return;
@@ -219,7 +215,7 @@ class ArticleParser {
 export function parse_article(content: string): [WikiArticle, Set<string>] {
     const parser = new ArticleParser();
     parser.parse(content);
-    return [parser.article, parser.article_aliases];
+    return [ parser.article, parser.article_aliases ];
 }
 
 /**
@@ -284,14 +280,14 @@ export class Wiki extends BotComponent {
                 continue;
             }
             const content = await fs.promises.readFile(file_path, { encoding: "utf-8" });
-            let parsed
+            let parsed;
             try {
                 parsed = parse_article(content);
             } catch (e: any) {
                 M.error(`Failed to parse article ${file_path}: ${e.message}`);
                 continue;
             }
-            const [ article, aliases ] = parsed
+            const [ article, aliases ] = parsed;
             this.articles[name] = article;
             for(const alias of aliases) {
                 this.article_aliases.set(alias, name);
@@ -333,8 +329,6 @@ export class Wiki extends BotComponent {
     }
 
     async wiki(command: TextBasedCommand, query: string) {
-        M.debug('displaying wiki'); // FIXME remove
-
         const matching_articles = Object
             .entries(this.articles)
             .filter(([ name, { title }]) => name == query.replaceAll("-", "_") || title == query)
