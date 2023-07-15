@@ -37,7 +37,7 @@ type WikiField = {
     name: string;
     value: string;
     inline: boolean;
-}
+};
 
 enum parse_state { body, field, footer, before_inline_field, done }
 
