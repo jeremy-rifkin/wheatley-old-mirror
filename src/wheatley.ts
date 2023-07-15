@@ -82,7 +82,7 @@ type text_command_map_target = {
     deletable: boolean;
 };
 
-type authentication = {
+export type authentication = {
     id: string;
     guild: string;
     token: string;
@@ -133,10 +133,9 @@ export class Wheatley extends EventEmitter {
     // True if freestanding mode is enabled. Defaults to false.
     readonly freestanding: boolean;
 
-    constructor(readonly client: Discord.Client, readonly database: DatabaseInterface) {
+    constructor(readonly client: Discord.Client, readonly database: DatabaseInterface, auth: authentication) {
         super();
 
-        const auth: authentication = JSON.parse(fs.readFileSync("auth.json", { encoding: "utf-8" }));
         this.id = auth.id;
         this.freestanding = auth.freestanding ?? false;
         this.guildId = auth.guild ?? TCCPP_ID;
