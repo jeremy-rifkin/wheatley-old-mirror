@@ -4,7 +4,6 @@ import { Routes } from "discord.js";
 import * as util from "util";
 
 import { critical_error, M } from "../utils.js";
-import { TCCPP_ID } from "../common.js";
 import { Wheatley } from "../wheatley.js";
 
 export class GuildCommandManager {
@@ -32,8 +31,7 @@ export class GuildCommandManager {
                     Routes.applicationGuildCommands(this.wheatley.id, this.wheatley.guildId),
                     { body: [] },
                 );
-            }
-            else {
+            } else {
                 M.log("Sending application guild commands");
                 // Clear any previous global commands
                 await rest.put(
