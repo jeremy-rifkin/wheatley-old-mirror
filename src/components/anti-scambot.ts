@@ -8,12 +8,6 @@
  ***************************************************/
 
 import { BotComponent } from "../bot-component.js";
-
-/**
- * Scambot prevention.
- *
- * Not freestanding.
- */
 export class AntiScambot extends BotComponent {}
 
 /**/

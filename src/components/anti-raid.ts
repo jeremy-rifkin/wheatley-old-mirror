@@ -8,12 +8,6 @@
  ***************************************************/
 
 import { BotComponent } from "../bot-component.js";
-
-/**
- * Raid prevention.
- *
- * Not freestanding.
- */
 export class AntiRaid extends BotComponent {}
 
 /**/
