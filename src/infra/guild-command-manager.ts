@@ -20,8 +20,9 @@ export class GuildCommandManager {
         try {
             this.finalized = true;
             const rest = new REST({ version: "10" }).setToken(token);
-            const route = this.wheatley.freestanding ? Routes.applicationGuildCommands(this.wheatley.id, this.wheatley.guildId)
-                                                     : Routes.applicationCommands(this.wheatley.id);
+            const route = this.wheatley.freestanding
+                ? Routes.applicationGuildCommands(this.wheatley.id, this.wheatley.guildId)
+                : Routes.applicationCommands(this.wheatley.id);
 
             M.log("Sending application commands");
             await rest.put(route, { body: this.commands });

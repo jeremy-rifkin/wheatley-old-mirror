@@ -2,7 +2,6 @@ import { strict as assert } from "assert";
 
 import * as Discord from "discord.js";
 import { EventEmitter } from "events";
-import * as fs from "fs";
 
 import { DatabaseInterface } from "./infra/database-interface.js";
 import { GuildCommandManager } from "./infra/guild-command-manager.js";
@@ -84,7 +83,7 @@ type text_command_map_target = {
 
 export type authentication = {
     id: string;
-    guild: string;
+    guild?: string;
     token: string;
     freestanding?: boolean;
 };
@@ -163,10 +162,10 @@ export class Wheatley extends EventEmitter {
         this.client.on("interactionCreate", this.on_interaction.bind(this));
         this.client.on("messageDelete", this.on_message_delete.bind(this));
         this.client.on("messageUpdate", this.on_message_update.bind(this));
-        this.client.on('ready', () => {
+        this.client.on("ready", () => {
             this.emit("wheatley_ready");
             this.ready = true;
-        })
+        });
 
         await this.add_component(Cppref);
         await this.add_component(Format);

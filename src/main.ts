@@ -18,11 +18,9 @@
 
 import * as Discord from "discord.js";
 
-import { strict as assert } from "assert";
 import { critical_error, init_debugger, M } from "./utils.js";
 
 import { DatabaseInterface } from "./infra/database-interface.js";
-import { fetch_root_mod_list } from "./common.js";
 
 import { authentication, Wheatley } from "./wheatley.js";
 import fs from "fs";

@@ -10,7 +10,7 @@ import { Wheatley } from "../wheatley.js";
 
 const inactive_timeout = 12 * 60 * MINUTE; // 12 hours for a thread that's seen no activity, mark it stale
 
-const cleanup_limit = 400; // how many messages back in the archive to go
+//const cleanup_limit = 400; // how many messages back in the archive to go
 
 // if the op says thank you remind them to close the thread after 15 minutes
 const thank_you_timeout = 5 * MINUTE;
