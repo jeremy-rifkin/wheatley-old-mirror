@@ -317,7 +317,7 @@ export function critical_error(...args: any[]) {
             zelis!.send(`Critical error occurred: ${strs.join(" ")}`)
                 .catch(() => void(0));
         }
-    })
+    }).catch(() => void(0));
 }
 
 export function unwrap<T>(x: T | null | undefined): T {
