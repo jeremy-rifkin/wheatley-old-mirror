@@ -20,7 +20,7 @@ However, there are some extra nuances:
 # Title
 ```
 A level 1 heading turns into the title of the embed.
-This will also be used to look up the article in the `/howto` command.
+This will also be used to look up the article in the `/wiki` or `/howto` command.
 
 There can be only one level 1 heading in the article, and because it is the
 title embed, it will always be displayed at the top of the embed, regardless
