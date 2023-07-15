@@ -47,53 +47,53 @@ enum parse_state { body, field, footer, before_inline_field, done }
 class ArticleParser {
     private readonly _article_aliases = new Set<string>();
 
-    private _title: string;
-    private _body?: string;
-    private _fields: WikiField[] = [];
-    private _footer?: string;
-    private _image?: string;
-    private _set_author?: true;
-    private _no_embed?: true;
+    private title: string;
+    private body?: string;
+    private fields: WikiField[] = [];
+    private footer?: string;
+    private image?: string;
+    private set_author?: true;
+    private no_embed?: true;
 
-    private _current_state = parse_state.body;
-    private _in_code = false;
+    private current_state = parse_state.body;
+    private in_code = false;
 
     parse(content: string) {
-        this._body = "";
+        this.body = "";
         for(const line of content.split(/\r?\n/)) {
             this.parse_line(line);
         }
-        assert(!this._in_code, "Unclosed code block in wiki article");
-        assert(this._current_state !== parse_state.before_inline_field, "Trailing inline field directive");
+        assert(!this.in_code, "Unclosed code block in wiki article");
+        assert(this.current_state !== parse_state.before_inline_field, "Trailing inline field directive");
 
-        this._body = this._body.trim();
-        if(this._body === "") {
-            this._body = undefined;
+        this.body = this.body.trim();
+        if(this.body === "") {
+            this.body = undefined;
         }
 
         // title will just be for search purposes in no embed mode
-        assert(this._title, "Wiki article must have a title");
+        assert(this.title, "Wiki article must have a title");
 
-        this._footer = this._footer?.trim();
-        assert(this._fields); // will always be true
+        this.footer = this.footer?.trim();
+        assert(this.fields); // will always be true
 
-        if(this._no_embed) {
-            assert(this._body, "Must have a body if it's not an embed");
-            assert(!this._footer, "Can't have a footer if it's not an embed");
-            assert(this._fields.length == 0, "Can't have fields if it's not an embed");
+        if(this.no_embed) {
+            assert(this.body, "Must have a body if it's not an embed");
+            assert(!this.footer, "Can't have a footer if it's not an embed");
+            assert(this.fields.length == 0, "Can't have fields if it's not an embed");
         }
 
-        this._current_state = parse_state.done;
+        this.current_state = parse_state.done;
     }
 
     parse_line(line: string): void {
         const trimmed = line.trim();
         if(trimmed.startsWith("```")) {
-            this._in_code = !this._in_code;
+            this.in_code = !this.in_code;
             this.parse_regular_line(line);
-        } else if(!this._in_code && line.startsWith("#")) {
+        } else if(!this.in_code && line.startsWith("#")) {
             this.parse_heading(line);
-        } else if(!this._in_code && trimmed.startsWith("<!--") && trimmed.endsWith("-->")) {
+        } else if(!this.in_code && trimmed.startsWith("<!--") && trimmed.endsWith("-->")) {
             const directive = trimmed.match(/^<!--+(.*?)-+->$/)![1].trim();
             this.parse_directive(directive);
         } else {
@@ -110,14 +110,14 @@ class ArticleParser {
         assert(level >= 1, "Cannot parse heading that has no heading level");
 
         if(level === 1) {
-            this._title = line.substring(1).trim();
-            this._current_state = parse_state.body;
+            this.title = line.substring(1).trim();
+            this.current_state = parse_state.body;
         } else if(level === 2) {
             const name = line.substring(2).trim();
-            const inline = this._current_state === parse_state.before_inline_field;
+            const inline = this.current_state === parse_state.before_inline_field;
             const field = { name, value: "", inline };
-            this._fields.push(field);
-            this._current_state = parse_state.field;
+            this.fields.push(field);
+            this.current_state = parse_state.field;
             return;
         } else {
             this.parse_regular_line(line);
@@ -131,15 +131,15 @@ class ArticleParser {
      */
     parse_directive(directive: string): void {
         if(directive === "inline") {
-            this._current_state = parse_state.before_inline_field;
+            this.current_state = parse_state.before_inline_field;
         } else if(directive === "footer") {
-            this._current_state = parse_state.footer;
+            this.current_state = parse_state.footer;
         } else if(directive === "user author") {
-            this._set_author = true;
+            this.set_author = true;
         } else if(directive === "no embed") {
-            this._no_embed = true;
+            this.no_embed = true;
         } else if (directive.startsWith("image ")) {
-            this._image = directive.substring("image ".length).trim();
+            this.image = directive.substring("image ".length).trim();
         } else if(directive.startsWith("alias ")) {
             const aliases = directive
                 .substring("alias ".length)
@@ -153,7 +153,7 @@ class ArticleParser {
     }
 
     parse_regular_line(line: string): void {
-        const requires_line_break = this._in_code ||
+        const requires_line_break = this.in_code ||
             line.startsWith("```") ||
             line.startsWith("#") ||
             line.trim() === "" ||
@@ -175,32 +175,32 @@ class ArticleParser {
             return prefix + terminated_line;
         };
 
-        if(this._current_state === parse_state.body) {
-            this._body = plus_line(this._body!);
-        } else if(this._current_state === parse_state.field) {
-            this._fields[this._fields.length - 1].value
-                = plus_line(this._fields[this._fields.length - 1].value);
-        } else if(this._current_state === parse_state.footer) {
-            this._footer = plus_line(this._footer ?? "");
+        if(this.current_state === parse_state.body) {
+            this.body = plus_line(this.body!);
+        } else if(this.current_state === parse_state.field) {
+            this.fields[this.fields.length - 1].value
+                = plus_line(this.fields[this.fields.length - 1].value);
+        } else if(this.current_state === parse_state.footer) {
+            this.footer = plus_line(this.footer ?? "");
         } else {
             assert(false);
         }
     }
 
     get is_done(): boolean {
-        return this._current_state === parse_state.done;
+        return this.current_state === parse_state.done;
     }
 
     get article(): WikiArticle {
         assert(this.is_done, "Attempting to access article of a parser without success");
         return {
-            title: this._title,
-            body: this._body,
-            fields: this._fields,
-            footer: this._footer,
-            image: this._image,
-            set_author: this._set_author ?? false,
-            no_embed: this._no_embed ?? false,
+            title: this.title,
+            body: this.body,
+            fields: this.fields,
+            footer: this.footer,
+            image: this.image,
+            set_author: this.set_author ?? false,
+            no_embed: this.no_embed ?? false,
         };
     }
 
