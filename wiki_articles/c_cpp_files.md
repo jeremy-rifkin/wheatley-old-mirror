@@ -1,7 +1,7 @@
 # What Are the File Types in C/C++
 
 <!-- inline -->
-## [Source Files: `.c|.cpp|.cxx|...`]
+## Source Files: `.c|.cpp|.cxx|...`
 - function definitions
 - global variable definitions
 - anything used **only** in that file
@@ -10,7 +10,7 @@ Each file is compiled independently, and in parallel.
 Don't `#include` them, but compile each.
 
 <!-- inline -->
-## [Header Files: `.h|.hpp|.tpp|...`]
+## Header Files: `.h|.hpp|.tpp|...`
 - forward-declarations/prototypes
 - type declarations
 - templates
