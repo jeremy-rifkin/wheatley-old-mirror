@@ -159,7 +159,9 @@ class ArticleParser {
             line.trim() === "" ||
             line.trim().startsWith("- ") ||
             line.trim().match(/^\d+.*$/);
-        const terminated_line = requires_line_break || line.endsWith("  ") ? line + "\n" : line;
+        const terminated_line = (requires_line_break ? line + "\n" : line)
+            .replace(/<br>\n|<br\/>\n/, "\n")
+            .replaceAll(/<br>|<br\/>/g, "\n");
 
         const plus_line = (prefix: string) => {
             if (prefix.length !== 0) {

@@ -21,15 +21,15 @@ Without warning flags like `-Wvla`, it can be easy to create a VLA by accident, 
 
 <!-- inline -->
 ## Compiler Support
-:white_check_mark: available since C99  
-:no_entry: not available in C++ at all  
-:no_entry: was never supported by MSVC  
-:warning: optional feature since C11  
+:white_check_mark: available since C99<br>
+:no_entry: not available in C++ at all<br>
+:no_entry: was never supported by MSVC<br>
+:warning: optional feature since C11<br>
 :warning: supported as non-standard extension by GCC, clang
 
 <!-- inline -->
 ## See Also
 <:stackoverflow:1074747016644661258>
-[What technical disadvantages do C99-style VLAs have?](https://stackoverflow.com/q/12407754/5740428)  
+[What technical disadvantages do C99-style VLAs have?](https://stackoverflow.com/q/12407754/5740428)<br>
 <:stackoverflow:1074747016644661258>
 [What's the point of VLA anyway?](https://stackoverflow.com/q/22530363/5740428)

@@ -36,8 +36,8 @@ int main() {
 - **[std::normal_distribution](https://en.cppreference.com/w/cpp/numeric/random/normal_distribution)**
 
 ## See Also
-- [Pseudo-random number generation](https://en.cppreference.com/w/cpp/numeric/random)  
+- [Pseudo-random number generation](https://en.cppreference.com/w/cpp/numeric/random)<br>
 <:stackoverflow:1074747016644661258>
-[Generate random numbers using C++11 random library](https://stackoverflow.com/q/19665818/5740428)  
+[Generate random numbers using C++11 random library](https://stackoverflow.com/q/19665818/5740428)<br>
 <:stackoverflow:1074747016644661258>
 [Why is the use of rand() considered bad?](https://stackoverflow.com/q/52869166/5740428)

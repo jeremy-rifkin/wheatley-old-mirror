@@ -35,6 +35,6 @@ std::unique_ptr<int[]> =
 ## Relevant Links
 - **[std::unique_ptr](https://en.cppreference.com/w/cpp/memory/unique_ptr)**, **[std::shared_ptr](https://en.cppreference.com/w/cpp/memory/shared_ptr)**, **[std::weak_ptr](https://en.cppreference.com/w/cpp/memory/weak_ptr)**
 - *[Smart Pointer Casts](https://en.cppreference.com/w/cpp/memory/shared_ptr/pointer_cast)*
-- [Standard library header <memory>](https://en.cppreference.com/w/cpp/header/memory)  
+- [Standard library header <memory>](https://en.cppreference.com/w/cpp/header/memory)<br>
 <:stackoverflow:1074747016644661258>
 [What is a smart pointer and when should I use one?](https://stackoverflow.com/q/106508/5740428)

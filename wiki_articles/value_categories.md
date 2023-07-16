@@ -1,7 +1,7 @@
 # Value Categories
 
-All expressions since C++11 have two properties, which characterize its value category:  
-:wastebasket: *can be moved from*  
+All expressions since C++11 have two properties, which characterize its value category:<br>
+:wastebasket: *can be moved from*<br>
 :id: *has identity*
 
 Three valid combinations exist:
@@ -50,6 +50,6 @@ and thus rvalue references can not bind to it.
 
 ## See Also
 - [cppreference: Value categories](https://en.cppreference.com/w/cpp/language/value_category)
-- [cppreference: Reference declaration](https://en.cppreference.com/w/cpp/language/reference)  
+- [cppreference: Reference declaration](https://en.cppreference.com/w/cpp/language/reference)<br>
 <:stackoverflow:1074747016644661258>
 [What is move semantics?](https://stackoverflow.com/q/3106110/5740428)

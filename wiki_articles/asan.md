@@ -10,7 +10,7 @@ such as:
 
 ## General Advice
 
-Not all sanitizers can be combined, but when they can, use e.g.:  
+Not all sanitizers can be combined, but when they can, use e.g.:<br>
 `-fsanitize=address,undefined` to combine them.
 Always compile with debug info to get line numbers, variable names, etc.
 

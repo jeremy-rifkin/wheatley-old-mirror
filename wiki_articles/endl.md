@@ -23,6 +23,6 @@ Use `<< '\n'` instead, if you don't need to flush.
 
 ## See Also
 <:stackoverflow:874353689031233606>
-["std::endl" vs "\n"](https://stackoverflow.com/q/213907/5740428)  
-- **[std::endl](https://en.cppreference.com/w/cpp/io/manip/endl)**  
+["std::endl" vs "\n"](https://stackoverflow.com/q/213907/5740428)<br>
+- **[std::endl](https://en.cppreference.com/w/cpp/io/manip/endl)**
 - **[std::flush](https://en.cppreference.com/w/cpp/io/manip/flush)**

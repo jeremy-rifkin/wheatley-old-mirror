@@ -76,7 +76,7 @@ The names of the aliases become the name of the commands.
 
 Just like on GitHub, you can split a paragraph's text over multiple source
 lines.
-You can add two spaces at the end of a line to insert a line break, and you can
+You can add `<br>` anywhere to insert a line break, and you can
 split paragraphs by inserting at least one blank line between them.
 
 Unordered lists (starting with `- `), ordered lists (starting with `1.`), and
