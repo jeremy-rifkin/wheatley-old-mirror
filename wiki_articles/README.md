@@ -2,10 +2,16 @@
 
 These wiki articles were contributed by member of the Together C & C++ discord server.
 
-## How to Contribute
+## Contributing
 
-Make a PR either adding or modifying a `.md` file in this folder, or submit an
+To contribute, make a pull request either adding or modifying a `.md` file in this folder, or submit an
 issue about an article.
+
+#### Usage Rights
+
+*By contributing an article, you grant the Together C & C++ Discord Server the right
+without limitation to use, copy, modify, merge, publish, sell, and distribute
+copies of your article and derivates thereof, without having to credit you as the author.*
 
 ## Wiki Markdown
 
