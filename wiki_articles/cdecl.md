@@ -9,30 +9,30 @@ Append whatever is left in the end.
 
 ## Example 1 - Array of Pointers, Or Pointer to Array?
 ```cpp
-int (*ptr)[10]; // declare ...
-      ptr       // ptr as ...
-    (*___)      // pointer to ...
-    ______[10]  // array[10] of ...
+int (*ptr)[10]; // declare
+      ptr       // ptr as
+    (*___)      // pointer to
+    ______[10]  // array[10] of
 int __________  // int
 // note: int *arr[10] would be an array of pointers
 ```
 
-## Example 2 - Nested Pointers with `const`
+## Example 2 - Nested Pointers With `const`
 ```cpp
-int const * const * p; // declare ...
-                    p  // p as ...
+int const * const * p; // declare
+                    p  // p as
                   * _  // pointer to
-          * const _ _  // const pointer to ...
+          * const _ _  // const pointer to
 int const _ _____ _ _  // const int
 // note: type is the same with 'const int' on the left
 ```
 
-## Example 3 - Abstract Declarators: When there is no Identifier
+## Example 3 - Abstract Declarators: When There Is No Identifier
 ```cpp
 void *(*)()
-      (*)    // pointer to ...
-      ___()  // function returning ...
-     *_____  // pointer to ...
+      (*)    // pointer to
+      ___()  // function returning
+     *_____  // pointer to
 void ______  // void
 ```
 
