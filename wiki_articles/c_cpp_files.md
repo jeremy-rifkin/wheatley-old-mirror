@@ -29,11 +29,11 @@ Sometimes `.ipp` or `.tpp` for C++ are used for internal headers with function d
 
 <!-- inline -->
 ## See Also
-📄 [How do header and source files in C work?](https://stackoverflow.com/q/5904530/5740428)  
-📄 [What are 'Include Guards' and #pragma once?](https://64.github.io/cpp-faq/include-guards-pragma-once/)
+<:stackoverflow:1074747016644661258> [How do header and source files in C work?](https://stackoverflow.com/q/5904530/5740428)  
+:page_facing_up: [What are 'Include Guards' and #pragma once?](https://64.github.io/cpp-faq/include-guards-pragma-once/)
 
 <!-- inline -->
 ## Common Errors
-⛔ [Redefinition of ... (compiler)](https://stackoverflow.com/q/3746484/5740428)  
-⛔ [Multiple definition of ... (linker)](https://stackoverflow.com/q/17764661/5740428)  
-⛔ [Splitting templates into source/header](https://stackoverflow.com/q/1724036/5740428)
+:no_entry: [Redefinition of ... (compiler)](https://stackoverflow.com/q/3746484/5740428)  
+:no_entry: [Multiple definition of ... (linker)](https://stackoverflow.com/q/17764661/5740428)  
+:no_entry: [Splitting templates into source/header](https://stackoverflow.com/q/1724036/5740428)

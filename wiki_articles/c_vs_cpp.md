@@ -5,15 +5,15 @@ There are good reasons for using both languages:
 
 <!-- inline -->
 ## Reasons To Use C
-✅ relatively low-level language  
-✅ much simpler language (no classes, templates, ...)  
-✅ portable to a wide variety of systems
+:white_check_mark: relatively low-level language  
+:white_check_mark: much simpler language (no classes, templates, ...)  
+:white_check_mark: portable to a wide variety of systems
 
 <!-- inline -->
 ## Reasons To Use C++
-✅ lots of helpful abstractions (classes, templates, ...)  
-✅ feature-rich language (function overloads, `constexpr`, ...)  
-✅ extensive standard library
+:white_check_mark: lots of helpful abstractions (classes, templates, ...)  
+:white_check_mark: feature-rich language (function overloads, `constexpr`, ...)  
+:white_check_mark: extensive standard library
 
 ## Which Is Faster?
 Neither language is inherently faster than the other.
