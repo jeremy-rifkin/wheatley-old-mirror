@@ -6,7 +6,7 @@ Algorithms such as
 *[Compare](https://en.cppreference.com/w/cpp/named_req/Compare)* function,
 which induces a *[strict weak ordering](https://en.wikipedia.org/wiki/Weak_ordering#Strict_weak_orderings)*.
 This means that the comparison `comp(x, y)` has to behave similar to `x < y`:
-1. `x < y` is never true (*Irreflexivity*) (this makes it *strict*)
+1. `x < x` is false (*Irreflexivity*) (this makes it *strict*)
 2. `x < y && y < z` implies `x < z` (*Transitivity*)
 3. `x < y` implies `!(y < x)` (*Asymmetry*)
 4. (see below)
