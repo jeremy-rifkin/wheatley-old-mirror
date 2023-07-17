@@ -1,7 +1,10 @@
 # What Is an Atomic Compare-And-Swap (CAS)?
 
 [CAS](https://en.wikipedia.org/wiki/Compare-and-swap)
-lets us implement atomic updates with any operation, no matter how complex.
+lets us implement
+*[read-modify-write operations](https://en.wikipedia.org/wiki/Read%E2%80%93modify%E2%80%93write)*
+for atomics,
+no matter how complex modifying is.
 It's often the foundation of
 *[lock-free algorithms](https://en.wikipedia.org/wiki/Non-blocking_algorithm)*.
 In C++, this takes the form of
