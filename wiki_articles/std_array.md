@@ -17,7 +17,7 @@ Usually, it's implemented along the lines of:
 ```cpp
 template <typename T, size_t N>
 struct array {
-    T data[N]; // and other members ...
+    T content[N]; // and other members ...
 };
 ```
 ## Example Usage
