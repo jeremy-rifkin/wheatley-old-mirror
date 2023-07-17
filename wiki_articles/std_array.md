@@ -24,7 +24,7 @@ struct array {
 ```cpp
 int arr[] = { 1, 2, 3 };              // turns into ...
 std::array<int, 3> arr = { 1, 2, 3 }; // or ...
-std::array arr = { 1, 2, 3 };         // with CTAD, since C++17
+std::array arr = { 1, 2, 3 };         // (CTAD, since C++17)
 ```
 
 ## See Also
