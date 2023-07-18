@@ -3,7 +3,7 @@
 C-style arrays have a few properties that make them annoying to use. They:
 
 :no_entry: cannot be returned from functions<br>
-:no_entry: are non-assignable<br>
+:no_entry: are not assignable with `=`<br>
 :no_entry: can only be initialized via `""`, `{}`, or *[default initialization](https://en.cppreference.com/w/cpp/language/default_initialization)*<br>
 :no_entry: cannot be passed to functions by value, but *[decay](https://64.github.io/cpp-faq/decay/)* to pointers<br>
 :warning: might implicitly turn into pointers, which is called *[array-to-pointer conversion](https://en.cppreference.com/w/cpp/language/implicit_conversion#Array-to-pointer_conversion)*<br>
