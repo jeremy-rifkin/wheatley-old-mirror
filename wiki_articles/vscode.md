@@ -1,6 +1,6 @@
-# Getting Started With VS Code for C/C++
+# Getting Started with VS Code for C/C++
 
-## :warning: Disclaimer For Beginners
+## :warning: Disclaimer for Beginners
 Do not use VS Code.
 It's better to use an IDE that works out of the box:
 - [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) on Windows (free)
@@ -8,7 +8,7 @@ It's better to use an IDE that works out of the box:
 - [XCode](https://developer.apple.com/xcode/) on macOS (free)
 - [repl.it](https://replit.com/site/ide) online IDE (free for public projects)
 
-## :one: Install A Compiler (possibly GCC through MinGW, or GCC through WSL)
+## :one: Install a Compiler (possibly GCC through MinGW, or GCC through WSL)
 Regardless of which editor you use, you need a compiler, which turns your code
 into an executable.
 Consider using
@@ -17,7 +17,7 @@ instead of
 [MinGW](https://code.visualstudio.com/docs/languages/cpp#_example-install-mingwx64),
 since Linux makes development much easier.
 
-## :two: Install The C/C++ Extension by Microsoft
+## :two: Install the C/C++ Extension by Microsoft
 Install [the extension](https://code.visualstudio.com/docs/languages/cpp) and
 follow the tutorial.
 Do not use *Code Runner*, it does not work well for C/C++.
