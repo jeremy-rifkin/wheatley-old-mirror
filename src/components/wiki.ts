@@ -5,7 +5,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { M } from "../utils.js";
-import { bot_spam_id, colors, rules_channel_id, stackoverflow_emote } from "../common.js";
+import { bot_spam_id, colors, resources_channel_id, rules_channel_id, stackoverflow_emote } from "../common.js";
 import { BotComponent } from "../bot-component.js";
 import { Wheatley } from "../wheatley.js";
 import { TextBasedCommand, TextBasedCommandBuilder } from "../command.js";
@@ -224,6 +224,7 @@ class ArticleParser {
         return str
             .replace(/<br>\n|<br\/>\n/, "\n")
             .replaceAll(/<br>|<br\/>/g, "\n")
+            .replaceAll(/#resources(?![a-zA-Z0-9_])/g, `<#${resources_channel_id}>`)
             .replaceAll(/#rules(?![a-zA-Z0-9_])/g, `<#${rules_channel_id}>`)
             .replaceAll(/(?<!<):stackoverflow:/g, stackoverflow_emote);
     }

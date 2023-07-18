@@ -53,7 +53,7 @@ export const the_button_channel_id = "1069678919667687455";
 export const skill_role_suggestion_log_id = "1099193160858599484";
 export const starboard_channel_id = "800509841424252968";
 export const announcements_channel_id = "331881381477089282";
-export const resources_channel_id = "574580408407293954";
+export const resources_channel_id = "1124619767542718524";
 export const staff_action_log_channel_id = "845290775692443699";
 
 // Thread-based help channels
