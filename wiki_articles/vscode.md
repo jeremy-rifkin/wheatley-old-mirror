@@ -11,7 +11,7 @@ It's better to use an IDE that works out of the box:
 ## 1. Install The C/C++ Extension by Microsoft
 Install [the extension](https://code.visualstudio.com/docs/languages/cpp) and
 follow the tutorial.
-Don't use third-party plugins like *Code Runner*, use the official stuff.
+Do not use *Code Runner*, it does not work well for C/C++.
 
 ## 2. Install A Compiler (possibly GCC through MinGW, or GCC through WSL)
 You still need to install a compiler, which is the thing that turns your code
