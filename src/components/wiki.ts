@@ -195,14 +195,14 @@ class ArticleParser {
      */
     private substitute_placeholders(line: string): string {
         if(this.in_code) return line;
-        let result = '';
-        let piece = '';
+        let result = "";
+        let piece = "";
         let in_inline_code = false;
         for(const c of line) {
-            if (c === '`') {
+            if (c === "`") {
                 if (in_inline_code) {
                     result += piece + c;
-                    piece = '';
+                    piece = "";
                 } else  {
                     result += this.substitute_placeholders_no_code(piece);
                     piece = c;
