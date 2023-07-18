@@ -1,7 +1,8 @@
 # What Is a Strict Weak Ordering in C++?
 
-Algorithms such as
-**[std::sort](https://en.cppreference.com/w/cpp/algorithm/sort)** and
+Algorithms like
+**[std::sort](https://en.cppreference.com/w/cpp/algorithm/sort)**
+and containers like
 **[std::set](https://en.cppreference.com/w/cpp/container/map)** require a
 *[Compare](https://en.cppreference.com/w/cpp/named_req/Compare)* function,
 which induces a *[strict weak ordering](https://en.wikipedia.org/wiki/Weak_ordering#Strict_weak_orderings)*.
@@ -16,12 +17,13 @@ Elements are allowed to be equivalent, i.e. `equiv(x, y)` is similar to `x == y`
 - let `equiv(x, y)` be `!(x < y) && !(y < x)`
 - then `equiv(x, y) && equiv(y, z)` implies `equiv(x, z)` (*Transitivity*)
 
-For example, when sorting strings by length, all strings of the same length are
-equivalent to only each other.
-This is okay.
+For example, when ordering strings by length, strings of the same length are
+equivalent to each other, but not to other strings.
+This satisfies **4.**.
 
 It is **not okay** to have elements like `NaN`, which are equivalent to
 `1` and `2`, but `1` and `2` are not equivalent to each other.
+`NaN` is equivalent to everything because `NaN < x` is always false.
 
 ## See Also
 <:stackoverflow:1074747016644661258>
