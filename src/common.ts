@@ -7,6 +7,7 @@ import { is_string, M } from "./utils.js";
 export const MINUTE = 1000 * 60;
 
 export const pepereally = "<:pepereally:643881257624666112>";
+export const stackoverflow_emote = "<:stackoverflow:1074747016644661258>";
 
 export const ApplicationCommandTypeUser = 2;
 export const ApplicationCommandTypeMessage = 3;
