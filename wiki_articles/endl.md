@@ -3,8 +3,8 @@
 I/O in C++
 (**[std::cout](https://en.cppreference.com/w/cpp/io/cout)**, i.e.
 **[std::ostream](https://en.cppreference.com/w/cpp/io/basic_ostream)**)
-is *buffered*, which means that not every byte you write to the stream is
-instantly written through to the terminal/disk.
+is *buffered*, which means that not every character you write to the stream
+is instantly written through to the terminal/disk.
 Doing so would be very slow.
 
 Instead, there is a buffer of e.g. 8192 bytes and when it's full,
