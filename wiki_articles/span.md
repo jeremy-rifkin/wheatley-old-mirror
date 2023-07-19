@@ -6,13 +6,13 @@ You can think of it as a pointer and an *extent*.
 It is more flexible than passing specific containers,
 and easier to use than templates.
 
-## :one: Use Case: Combine Pointer And Size
+## Use Case - Combine Pointer And Size
 ```diff
 -int sum(const int* data, size_t size);
 +int sum(std::span<const int> data);
 ```
 
-## :two: Use Case: Avoid Passing Reference to `std::array`
+## Use Case - Avoid Passing Reference to `std::array`
 A span with *static extent* can be created from
 **[C-style arrays](https://en.cppreference.com/w/cpp/language/array)**,
 **[std::array](https://en.cppreference.com/w/cpp/container/array)**, etc.
@@ -22,7 +22,7 @@ A span with *static extent* can be created from
 ```
 
 
-## :three: Use Case: Avoid Passing Reference to `std::vector` 
+## Use Case - Avoid Passing Reference to `std::vector` 
 A span with *dynamic extent* can be created from
 **[std::vector](https://en.cppreference.com/w/cpp/container/vector)**,
 **[std::array](https://en.cppreference.com/w/cpp/container/array)**, etc.
