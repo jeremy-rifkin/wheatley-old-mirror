@@ -1,4 +1,4 @@
-# What Is Sequencing, And What Are Sequence Points?
+# What Is Sequencing, and What Are Sequence Points?
 
 Some operations in C++ are *sequenced* before others, meaning that they happen
 first.
@@ -19,7 +19,7 @@ Also, `p->test` won't happen if `p == nullptr`.
 int x, y;
 x = y = 0;
 ```
-This code is safe because `y = 3` is sequenced before `x = y`.
+This code is safe because `y = 0` is sequenced before `x = y`.
 Otherwise, we would access an indeterminate value `y`, which is UB.
 
 ## Sequence Points

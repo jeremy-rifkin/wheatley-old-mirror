@@ -1,4 +1,4 @@
-# About `std::endl`, Buffers, And Flushing
+# About `std::endl`, Buffers, and Flushing
 
 I/O in C++
 (**[std::cout](https://en.cppreference.com/w/cpp/io/cout)**, i.e.
@@ -12,8 +12,8 @@ all data is written through to the OS, i.e. *flushed* in one syscall.
 This is much more efficient.
 
 <!-- inline -->
-## What is *flushing*?
-*Flushing* means that all bytes currently in the buffer are written through,
+## What Is *Flushing*?
+*Flushing* means that all characters currently in the buffer are written through,
 and the buffer is cleared.
 
 Use **[<< std::flush](https://en.cppreference.com/w/cpp/io/manip/flush)**
