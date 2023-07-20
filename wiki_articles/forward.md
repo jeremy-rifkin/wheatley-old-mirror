@@ -6,12 +6,12 @@ if `T` is a template parameter to the current function template.
 These references have special deduction rules:
 ```cpp
 template <class T>
-void fwd(T&& r); // r is a forwarding reference
+void f(T&& r); // r is a forwarding reference
 
-fwd(0); // call with prvalue: T = int / T&& = int&&
-fwd(std::move(x));         // same for xvalue
-int x;  // call with lvalue:  T = int& / T&& = int&
-fwd(x);                    // (reference collapsing)
+f(0);  // call with prvalue: T = int,  T&& = int&&
+f(std::move(x));         // (same for xvalue)
+int x; // call with lvalue:  T = int&, T&& = int&
+f(x);                    // (reference collapsing)
 
 // auto&& can also be a forwarding reference:
 auto&& a = x; // decltype(a) = int&
@@ -21,7 +21,7 @@ auto&& a = x; // decltype(a) = int&
 Mo matter what `T` deduces to, the expression `r`
 is an
 *[lvalue](https://en.cppreference.com/w/cpp/language/value_category#lvalue)*
-when used inside the function.
+when used inside the function `f`.
 **[std::forward](https://en.cppreference.com/w/cpp/utility/forward)**
 recovers the reference type:
 ```cpp
