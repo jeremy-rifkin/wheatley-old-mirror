@@ -17,7 +17,7 @@ A span with *static extent* can be created from
 **[C-style arrays](https://en.cppreference.com/w/cpp/language/array)**,
 **[std::array](https://en.cppreference.com/w/cpp/container/array)**, etc.
 ```diff
--void write(std::array<char, 8192> &to);
+-void write(std::array<char, 8192>& to);
 +void write(std::span<char, 8192> to);
 ```
 
@@ -27,7 +27,7 @@ A span with *dynamic extent* can be created from
 **[std::vector](https://en.cppreference.com/w/cpp/container/vector)**,
 **[std::array](https://en.cppreference.com/w/cpp/container/array)**, etc.
 ```diff
--void write(std::vector<char> &to);
+-void write(std::vector<char>& to);
 +void write(std::span<char> to);
 ```
 
