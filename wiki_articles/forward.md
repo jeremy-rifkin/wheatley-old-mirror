@@ -18,7 +18,7 @@ auto&& a = x; // decltype(a) = int&
 ```
 
 ## Perfectly Forwarding Function Arguments With `std::forward`
-Mo matter what `T` deduces to, the expression `r`
+No matter what `T` deduces to, the expression `r`
 is an
 *[lvalue](https://en.cppreference.com/w/cpp/language/value_category#lvalue)*
 when used inside the function `f`.
