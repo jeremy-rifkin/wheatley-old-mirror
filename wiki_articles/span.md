@@ -18,7 +18,7 @@ A span with *static extent* can be created from
 **[std::array](https://en.cppreference.com/w/cpp/container/array)**, etc.
 ```diff
 -void write(std::array<char, 8192> &to);
-+void write(std::span<char, 81928> to);
++void write(std::span<char, 8192> to);
 ```
 
 
