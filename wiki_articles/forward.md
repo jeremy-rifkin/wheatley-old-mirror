@@ -2,7 +2,7 @@
 
 References of the form `T&&` are
 *[forwarding references](https://en.cppreference.com/w/cpp/language/reference#Forwarding_references)*
-if `T` is a template parameter to the current function template.
+if `T` is a template parameter of the current function template.
 These references have special deduction rules:
 ```cpp
 template <class T>
