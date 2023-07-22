@@ -1,4 +1,4 @@
-# _BitInt and Extended Integers in C/C++?
+# _BitInt and Extended Integers in C/C++
 
 **[_BitInt(N)](https://en.cppreference.com/w/c/language/arithmetic_types#Integer_types)**
 is an N-bit integer available since
