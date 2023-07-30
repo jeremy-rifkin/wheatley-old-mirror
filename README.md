@@ -1,3 +1,7 @@
+This repository is archived! The project now lives at https://github.com/jeremy-rifkin/wheatley.
+
+---
+
 # Wheatley
 
 [![build](https://github.com/jeremy-rifkin/wheatley-mirror/actions/workflows/build.yml/badge.svg)](https://github.com/jeremy-rifkin/wheatley-mirror/actions/workflows/build.yml)
