@@ -9,14 +9,14 @@ constexpr T      pi = std::numbers::pi_v<T>;
 // C++17 or lower:
 const double pi = std::acos(-1); // from <cmath>
 const T      pi = std::acos(T(-1));
-// note: all variables can be constexpr since C++26
+// note: all variables can be constexpr after C++26
 ```
 
 ## C
 ```cpp
 const double pi = acos(-1); // from <math.h>
 const T      pi = acos((T) -1); // from <tgmath.h> (C11)
-// note: all variables can be constexpr since C23
+// note: all variables can be constexpr after C23
 // warning: do not use M_PI, it is not portable
 ```
 
